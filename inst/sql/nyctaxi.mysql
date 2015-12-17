@@ -1,0 +1,52 @@
+DROP TABLE IF EXISTS fares;
+DROP TABLE IF EXISTS trips;
+
+CREATE TABLE `fares` (
+ `medallion` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+ `hack_license` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+ `vendor_id` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
+ `pickup_datetime` datetime DEFAULT NULL,
+ `payment_type` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
+ `fare_amount` float(6,2) DEFAULT NULL,
+ `surcharge` float(6,2) DEFAULT NULL,
+ `mta_tax` float(6,2) DEFAULT NULL,
+ `tip_amount` float(6,2) DEFAULT NULL,
+ `tolls_amount` float(6,2) DEFAULT NULL,
+ `total_amount` float(6,2) DEFAULT NULL,
+ `pickup_date` date DEFAULT NULL,
+ `pickup_time` time DEFAULT NULL,
+ KEY `medallion_idx` (`medallion`),
+ KEY `pickup_time_idx` (`pickup_time`),
+ KEY `pickup_date_idx` (`pickup_date`)
+)
+>
+CREATE TABLE `trips` (
+ `medallion` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+ `hack_license` varchar(255) COLLATE latin1_general_ci DEFAULT NULL,
+ `vendor_id` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
+ `rate_code` int(11) DEFAULT NULL,
+ `store_and_fwd_flag` varchar(10) COLLATE latin1_general_ci DEFAULT NULL,
+ `pickup_datetime` datetime DEFAULT NULL,
+ `dropoff_datetime` datetime DEFAULT NULL,
+ `passenger_count` int(11) DEFAULT NULL,
+ `trip_time_in_secs` int(11) DEFAULT NULL,
+ `trip_distance` float(10,2) DEFAULT NULL,
+ `pickup_longitude` double(10,6) DEFAULT NULL,
+ `pickup_latitude` double(10,6) DEFAULT NULL,
+ `dropoff_longitude` double(10,6) DEFAULT NULL,
+ `dropoff_latitude` double(10,6) DEFAULT NULL,
+ `pickup_date` date DEFAULT NULL,
+ `pickup_time` time DEFAULT NULL,
+ `dropoff_date` date DEFAULT NULL,
+ `dropoff_time` time DEFAULT NULL,
+ KEY `medallion_idx` (`medallion`),
+ KEY `pickup_date_idx` (`pickup_date`),
+ KEY `pickup_time_idx` (`pickup_time`),
+ KEY `dropoff_date_idx` (`dropoff_date`),
+ KEY `dropoff_time_idx` (`dropoff_time`)
+)
+
+LOAD DATA LOCAL INFILE '/path/to/data/taxi/trip_data_1.csv' INTO TABLE trips FIELDS TERMINATED BY ',' IGNORE 1 LINES (medallion, hack_license, vendor_id, rate_code, store_and_fwd_flag, @pickup_datetime, @dropoff_datetime, passenger_count, trip_time_in_secs, trip_distance, pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude) 
+  SET 
+  pickup_datetime=STR_TO_DATE(@pickup_datetime, '%Y-%m-%d %H:%i:%s'),
+  dropoff_datetime=STR_TO_DATE(@dropoff_datetime, '%Y-%m-%d %H:%i:%s');

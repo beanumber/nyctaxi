@@ -1,0 +1,13 @@
+Package: nyctaxi
+Title: Use the NYC Taxi Data
+Version: 0.0.0.9000
+Authors@R: person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut", "cre"))
+Description: Use the NYC Taxi data
+Depends:
+    R (>= 3.2.3),
+    etl
+Imports:
+    RCurl
+License: What license is it under?
+LazyData: true
+RoxygenNote: 5.0.1
