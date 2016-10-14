@@ -16,9 +16,17 @@
 #' taxi %>%
 #'   
 
-etl_transform.etl_nyctaxi <- function(obj, ...) {
+etl_transform.etl_nyctaxi <- function(obj, month = 1, ...) {
   message("Transforming raw data...")
-  unzip(paste0(dir, "trip_data_1.csv.zip"))
+  
+  #directory for src and dest file
+  raw_dir <- paste0(attr(obj, "dir"), "/raw")
+  load_dir <- paste0(attr(obj, "load_dir"), "/month_", month)
+  
+  #unzip file
+  filename <- paste0("trip_data_", month, ".csv.zip")
+  path <- paste0(raw,"/", filename)
+  unzip(path, exdir = load_dir)
 }
 
 #' @export
