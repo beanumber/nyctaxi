@@ -20,12 +20,12 @@ etl_transform.etl_nyctaxi <- function(obj, month = 1, ...) {
   message("Transforming raw data...")
   
   #directory for src and dest file
-  raw_dir <- paste0(attr(obj, "dir"), "/raw")
-  load_dir <- paste0(attr(obj, "load_dir"), "/month_", month)
+  raw_dir <- attr(obj, "raw_dir")
+  load_dir <- attr(obj, "load_dir")
   
   #unzip file
   filename <- paste0("trip_data_", month, ".csv.zip")
-  path <- paste0(raw,"/", filename)
+  path <- file.path(raw_dir, filename)
   unzip(path, exdir = load_dir)
 }
 
