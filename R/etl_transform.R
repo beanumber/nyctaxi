@@ -28,4 +28,6 @@ etl_load.etl_nyctaxi <- function(obj, schema = FALSE, ...) {
     stop("Invalid connection to database.")
   }
   invisible(db)
+  
+  #DBI::dbWriteTable()
 }

@@ -26,8 +26,10 @@ extract data from NYC taxi trips
 \examples{
 
 taxi <- etl("nyctaxi", dir = "~/dumps/nyctaxi/")
-taxi \%>\%
-  etl_extract()
+taxi \%>\% 
+   etl_extract() \%>\% 
+   etl_transform() \%>\% 
+   etl_load() 
 }
 \seealso{
 \code{\link[etl]{etl_extract}}

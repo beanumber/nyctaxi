@@ -22,5 +22,6 @@ etl_extract.etl_nyctaxi <- function(obj, ...) {
   
   local <- paste0(raw_dir, "/trip_data_1.csv.zip")
   remote <- "https://nyctaxitrips.blob.core.windows.net/data/trip_data_1.csv.zip"
-  download.file(remote, local)
+  etl::smart_download(remote, local)
+  invisible(obj)
 }
