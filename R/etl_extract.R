@@ -1,14 +1,17 @@
 #' Extract data from NYC Taxi Trips
 #' 
 #' @import etl
-#' @importFrom RCurl getURL
-#' @export
-#' 
+#' @export 
+#' @details extract data from NYC taxi trips 
+#' @inheritParams etl::etl_extract
+#' @seealso \code{\link[etl]{etl_extract}}
 #' @examples 
 #' 
 #' taxi <- etl("nyctaxi", dir = "~/dumps/nyctaxi/")
-#' taxi %>%
-#'   etl_extract()
+#' taxi %>% 
+#'    etl_extract() %>% 
+#'    etl_transform() %>% 
+#'    etl_load() 
 
 etl_extract.etl_nyctaxi <- function(obj, ...) {
   message("Extracting raw data...")

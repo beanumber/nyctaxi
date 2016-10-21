@@ -1,20 +1,5 @@
-#' Extract data from NYC Taxi Trips
-#' 
-#' @import etl
-#' @importFrom RCurl getURL
-#' @export
-#' 
-#' @examples 
-#' 
-#' if (require(RMySQL)) {
-#'  db <- src_mysql(dbname = "nyctaxi", user = "r-user", password = "mypass")
-#' }
-#' 
-#' taxi <- etl("nyctaxi", db, dir = "~/dumps/nyctaxi/")
-#' taxi %>%
-#'   etl_load()
-#' taxi %>%
-#'   
+#' @rdname etl_extract.etl_nyctaxi
+#' @export  
 
 etl_transform.etl_nyctaxi <- function(obj, month = 1, ...) {
   message("Transforming raw data...")
@@ -30,7 +15,9 @@ etl_transform.etl_nyctaxi <- function(obj, month = 1, ...) {
 }
 
 #' @export
-
+#' @rdname etl_extract.etl_nyctaxi
+#' 
+#' 
 etl_load.etl_nyctaxi <- function(obj, schema = FALSE, ...) {
   raw_dir <- paste0(attr(obj, "dir"), "/raw")
   
