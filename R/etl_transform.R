@@ -16,18 +16,22 @@ etl_transform.etl_nyctaxi <- function(obj, month = 1, ...) {
 
 #' @export
 #' @rdname etl_extract.etl_nyctaxi
+#' @importFrom DBI dbWriteTable
+#' @import etl
 #' 
-#' 
-etl_load.etl_nyctaxi <- function(obj, schema = FALSE, ...) {
-  raw_dir <- paste0(attr(obj, "dir"), "/raw")
+etl_load.etl_nyctaxi <- function(obj, schema = FALSE, month=1,...) {
+  #raw_dir <- paste0(attr(obj, "dir"), "/raw")
   
-  db <- verify_con(obj)
-  if (is(db$con, "DBIConnection")) {
-      message(dbRunScript(db$con, system.file("sql/nyctaxi.mysql", package = "nyctaxi"), ...))
-  } else {
-    stop("Invalid connection to database.")
-  }
-  invisible(db)
+  #extract only the data of the month we want
+  load_dir <- attr(obj, "load_dir")
+  filename <- paste0("trip_data_", month, ".csv")
+  path <- file.path(load_dir,filename)
+  #trip <- read.csv(path)
   
+  #db <- etl:::verify_con(obj) --> encountered error as this is an S3 object
+  #db <- dbConnect(RSQLite::RSQLite(),":memory:") alternative 
+
   #DBI::dbWriteTable()
+  DBI:::dbWriteTable(conn=obj$con, "trips",path)
+  invisible(db)
 }
