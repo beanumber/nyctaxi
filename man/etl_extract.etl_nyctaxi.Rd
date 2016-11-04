@@ -6,11 +6,12 @@
 \alias{etl_transform.etl_nyctaxi}
 \title{Extract data from NYC Taxi Trips}
 \usage{
-\method{etl_extract}{etl_nyctaxi}(obj, ...)
+\method{etl_extract}{etl_nyctaxi}(obj, month = 1, trip = TRUE,
+  fare = FALSE, ...)
 
 \method{etl_transform}{etl_nyctaxi}(obj, month = 1, ...)
 
-\method{etl_load}{etl_nyctaxi}(obj, schema = FALSE, ...)
+\method{etl_load}{etl_nyctaxi}(obj, schema = FALSE, month = 1, ...)
 }
 \arguments{
 \item{obj}{an \code{\link{etl}} object}
