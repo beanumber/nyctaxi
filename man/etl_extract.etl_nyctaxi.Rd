@@ -6,7 +6,7 @@
 \alias{etl_transform.etl_nyctaxi}
 \title{Extract data from NYC Taxi Trips}
 \usage{
-\method{etl_extract}{etl_nyctaxi}(obj, month = 1, trip = TRUE,
+\method{etl_extract}{etl_nyctaxi}(obj, month = 1, color = "yellow",
   fare = FALSE, ...)
 
 \method{etl_transform}{etl_nyctaxi}(obj, month = 1, ...)
