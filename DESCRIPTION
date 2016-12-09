@@ -1,6 +1,6 @@
 Package: nyctaxi
 Title: Use the NYC Taxi Data
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: c(person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut", "cre")),
             person("Trang", "Le", email = "trang.lt157@gmail.com", role = c("aut")))
 Description: Use the NYC Taxi data
@@ -12,4 +12,7 @@ Imports:
 License: What license is it under?
 LazyData: true
 RoxygenNote: 5.0.1
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
