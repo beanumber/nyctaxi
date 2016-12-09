@@ -1,7 +1,7 @@
 #' @rdname etl_extract.etl_nyctaxi
 #' @export  
 
-etl_transform.etl_nyctaxi <- function(obj, month = 1, ...) {
+etl_transform.etl_nyctaxi <- function(obj, month = 1, type = "yellow", ...) {
   message("Transforming raw data...")
   
   #directory for src and dest file
