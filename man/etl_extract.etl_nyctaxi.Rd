@@ -9,10 +9,11 @@
 \method{etl_extract}{etl_nyctaxi}(obj, year = 2016, month = 1,
   type = "yellow", ...)
 
-\method{etl_transform}{etl_nyctaxi}(obj, month = 1, type = "yellow", ...)
+\method{etl_transform}{etl_nyctaxi}(obj, year = 2016, month = 1,
+  type = "yellow", ...)
 
-\method{etl_load}{etl_nyctaxi}(obj, schema = FALSE, type = "yellow",
-  year = "2016", month = 1, ...)
+\method{etl_load}{etl_nyctaxi}(obj, year = "2016", month = 1,
+  type = "yellow", ...)
 }
 \arguments{
 \item{obj}{an \code{\link{etl}} object}
