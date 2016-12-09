@@ -13,21 +13,13 @@
 #'    etl_transform() %>% 
 #'    etl_load() 
 
-etl_extract.etl_nyctaxi <- function(obj, month = 1, type  = "yellow", year = 2016, fare=FALSE,...) {
+etl_extract.etl_nyctaxi <- function(obj, year = 2016, month = 1, type  = "yellow", ...) {
   message("Extracting raw data...")
   raw_dir <- paste0(attr(obj, "dir"), "/raw")
-  if (!dir.exists(raw_dir)) {
-    dir.create(raw_dir)
-  }
-  month <- as.character(month)
   
-  local <- paste0(raw_dir, "/",type,"_tripdata_",year,"-0",month,".csv")
-  remote <- paste0("https://s3.amazonaws.com/nyc-tlc/trip+data/",type,"_tripdata_",year,"-0",month,".csv")
-  downloader::download(remote, local)
-  #if(fare) {
-  # local <- paste0(raw_dir, "/fare/trip_fare_",month,".csv.zip")
-  #  remote <- paste0("http://nyctaxitrips.blob.core.windows.net/data/trip_fare_",month,".csv.zip")
-  #  download.file(remote, local,method="curl")
-  #}
+  remote <- paste0("https://s3.amazonaws.com/nyc-tlc/trip+data/", 
+                   type, "_tripdata_", year, "-0", month, ".csv")
+  etl::smart_download(obj, remote)
+
   invisible(obj)
 }
