@@ -93,13 +93,13 @@ We use the lubridate package to convert date time data and get summary statistic
 ```{r}
 library(lubridate)
 one_cab = one_cab %>% 
-  mutate(tpep_pickup_datetime = as.Date(tpep_pickup_datetime)) %>%     mutate(tpep_dropoff_datetime = as.Date(tpep_dropoff_datetime)) %>% 
+  mutate(tpep_pickup_datetime = ymd_hms(tpep_pickup_datetime)) %>%     mutate(tpep_dropoff_datetime = ymd_hms(tpep_dropoff_datetime)) %>% 
   mutate(weekday_pickup = wday(tpep_pickup_datetime,label=T)) %>%    mutate(weekday_dropoff=wday(tpep_dropoff_datetime,label=T))
 
 tally(~weekday_dropoff, data=one_cab)
 
 one_cab %>% 
-  group_by(tpep_pickup_datetime) %>%
+  group_by(as.Date(tpep_pickup_datetime)) %>%
   summarize(N = n(), avg_dist = mean(trip_distance), 
             avg_passengers = mean(passenger_count), 
             avg_fare = mean(fare_amount))
@@ -117,7 +117,7 @@ sample %>% slice(rows)
 
 #do the same data cleaning process
 sample = sample %>% 
-  mutate(tpep_pickup_datetime = as.Date(tpep_pickup_datetime)) %>%     mutate(tpep_dropoff_datetime = as.Date(tpep_dropoff_datetime)) %>% 
+  mutate(tpep_pickup_datetime = ymd_hms(tpep_pickup_datetime)) %>%     mutate(tpep_dropoff_datetime = ymd_hms(tpep_dropoff_datetime)) %>% 
   mutate(weekday_pickup = wday(tpep_pickup_datetime,label=T)) %>%    mutate(weekday_dropoff=wday(tpep_dropoff_datetime,label=T))
 
 tally(~weekday_pickup,data=sample)
@@ -139,14 +139,12 @@ leaflet(data = small_sample) %>%
 ```
 
 ```{r,include=FALSE}
-#try to look at rush hour pickups
-rush_hour <- my_trips %>% mutate(tpep_pickup_datetime=as.Date(tpep_pickup_datetime)) %>% collect(10000000)
+#try to look at rush hour pickups and compare to weekdays pickups
+rush_hour <- sample %>% filter(hour(tpep_pickup_datetime) >= 5, hour(tpep_pickup_datetime) < 7)
 
-rush_hour %>% filter(pickup_longitude != 0,hour(as.Date(tpep_pickup_datetime)) > 5, hour(as.Date(tpep_pickup_datetime)) < 7)
-
-leaflet(data = rush_hour) %>% 
-  addTiles() %>% 
-  addCircles(lng = ~pickup_longitude, lat = ~pickup_latitude) %>% 
-  addCircles(lng = ~dropoff_longitude, lat = ~dropoff_latitude, color = "green")
+rush_hour %>% group_by(weekday_pickup) %>% 
+  summarize(N = n(), avg_dist = mean(trip_distance), 
+            avg_passengers = mean(passenger_count), 
+            avg_fare = mean(fare_amount)) 
 ```
-
+It looks like on Sunday and Saturday, the trip distance and fair increase for rush hour pickups. 
