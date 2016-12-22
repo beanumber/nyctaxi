@@ -18,6 +18,13 @@
 \arguments{
 \item{obj}{an \code{\link{etl}} object}
 
+\item{year}{a numeric vector giving the years}
+
+\item{month}{a numeric vector giving the months}
+
+\item{type}{a character vector of \code{yellow} or \code{green}. The default 
+is \code{yellow}.}
+
 \item{...}{arguments passed to methods}
 }
 \description{
@@ -29,10 +36,12 @@ extract data from NYC taxi trips
 \examples{
 
 taxi <- etl("nyctaxi", dir = "~/dumps/nyctaxi/")
+\dontrun{
 taxi \%>\% 
    etl_extract() \%>\% 
    etl_transform() \%>\% 
    etl_load() 
+}
 }
 \seealso{
 \code{\link[etl]{etl_extract}}

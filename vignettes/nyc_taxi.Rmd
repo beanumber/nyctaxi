@@ -9,30 +9,29 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## NYCTaxi
+## NYC Taxi
 
 NYC's Taxi and Limousine Commission (TLC) Trip Data is a collection of trip records including fields capturing pick-up and drop-off locations, times, trip distances, fares, rate types, and driver-reported passenger counts. The data was collected and provided to the NYC TLC by technology providers under the Taxicab & Livery Passenger Enhancement Programs. 
-ss
 
 ## Extracting, Transforming and Loading the data
+
 ```{r}
-library(etl)
 library(nyctaxi)
-library(lubridate)
-library(mosaic)
 taxi <- etl("nyctaxi", dir = "~/dumps/nyctaxi/")
-taxi %>% etl_extract() #default argument for month is 1, range from 1-12
-taxi %>% etl_transform() #copy file from raw to load folder
-taxi %>% etl_load() #load the dataset into an sql database
+# taxi %>% etl_extract() #default argument for month is 1, range from 1-12
+# taxi %>% etl_transform() #copy file from raw to load folder
+# taxi %>% etl_load() #load the dataset into an sql database
 ```
+
 Or, we can use etl_update() altogether
-```{r,eval=FALSE}
+
+```{r, eval=FALSE}
 taxi %>% etl_update()
 ```
 
 We visualize pickup and dropoff location for the first 500 trips in the dataset. 
 
-```{r}
+```{r, eval=FALSE}
 my_trips <- tbl(taxi, "trips")
 #clean_up data according to date and time of pickup
 one_cab <- my_trips %>% filter(pickup_longitude != 0) %>% head(500) %>% collect() 
@@ -45,13 +44,13 @@ leaflet(data = one_cab) %>%
 
 
 We use the lubridate package to convert date time data and get summary statistics on Friday trips
-```{r}
+```{r, eval=FALSE}
 library(lubridate)
 one_cab = one_cab %>% 
   mutate(tpep_pickup_datetime = ymd_hms(tpep_pickup_datetime)) %>%     mutate(tpep_dropoff_datetime = ymd_hms(tpep_dropoff_datetime)) %>% 
   mutate(weekday_pickup = wday(tpep_pickup_datetime,label=T)) %>%    mutate(weekday_dropoff=wday(tpep_dropoff_datetime,label=T))
 
-tally(~weekday_dropoff, data=one_cab)
+mosaic::tally(~weekday_dropoff, data=one_cab)
 
 one_cab %>% 
   group_by(as.Date(tpep_pickup_datetime)) %>%
@@ -61,7 +60,7 @@ one_cab %>%
 ```
 
 Take a random sample of 25000 observations to compare trip statistics for different days of the week
-```{r}
+```{r, eval=FALSE}
 set.seed(7)
 
 sample <- my_trips %>% filter(pickup_longitude != 0) %>% collect(n=1000000)
@@ -79,7 +78,7 @@ tally(~weekday_pickup,data=sample)
 ```
 
 We can also get summary statistics for different days of the week:
-```{r}
+```{r, eval=FALSE}
 sample %>% group_by(weekday_pickup) %>% 
   summarize(N = n(), avg_dist = mean(trip_distance), 
             avg_passengers = mean(passenger_count), 
@@ -93,7 +92,7 @@ leaflet(data = small_sample) %>%
   addCircles(lng = ~dropoff_longitude, lat = ~dropoff_latitude, color = "green")
 ```
 
-```{r,include=FALSE}
+```{r, eval=FALSE, include=FALSE}
 #try to look at rush hour pickups and compare to weekdays pickups
 rush_hour <- sample %>% filter(hour(tpep_pickup_datetime) >= 5, hour(tpep_pickup_datetime) < 7)
 

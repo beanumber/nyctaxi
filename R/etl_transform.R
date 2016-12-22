@@ -36,6 +36,6 @@ etl_load.etl_nyctaxi <- function(obj, year = "2016", month = 1, type = "yellow",
   #DBI::dbWriteTable()
   #drv <- dbDriver("SQLite")
   #db <- dbConnect(drv, dbPath)
-  DBI:::dbWriteTable(conn = obj$con, "trips", path)
+  DBI::dbWriteTable(conn = obj$con, "trips", path)
   invisible(obj)
 }
