@@ -2,6 +2,6 @@
 
 S3method(etl_extract,etl_nyctaxi)
 S3method(etl_load,etl_nyctaxi)
-S3method(etl_transform,etl_nyctaxi)
 import(etl)
 importFrom(DBI,dbWriteTable)
+importFrom(stringr,str_pad)

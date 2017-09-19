@@ -13,7 +13,7 @@ Imports:
     stringr
 License: CC0
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Suggests: testthat,
     knitr,
     lubridate,

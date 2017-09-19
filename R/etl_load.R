@@ -3,22 +3,10 @@
 #' @importFrom DBI dbWriteTable
 #' @import etl
 #' 
-etl_load.etl_nyctaxi <- function(obj, year = "2016", month = 1, type = "yellow", ...) {
-  message("Loading data into database...")
-  #raw_dir <- paste0(attr(obj, "dir"), "/raw")
-  
-  #extract only the data of the month we want
-  load_dir <- attr(obj, "load_dir")
-  #filename <- paste0("trip_data_", month, ".csv")
-  #path <- file.path(load_dir,filename)
-  #trip <- read.csv(path)
-  path <- paste0(load_dir, "/", type, "_tripdata_", year, "-0", month, ".csv")
-  #db <- etl:::verify_con(obj) --> encountered error as this is an S3 object
-  #db <- dbConnect(RSQLite::RSQLite(),":memory:") alternative 
-  
-  #DBI::dbWriteTable()
-  #drv <- dbDriver("SQLite")
-  #db <- dbConnect(drv, dbPath)
-  DBI::dbWriteTable(conn = obj$con, "trips", path)
+etl_load.etl_nyctaxi <- function(obj, years = "2016", months = 1, types = "yellow", ...) {
+  match_files_by_year_months(list.files(attr(obj, "load_dir")),
+                             pattern = "yellow_tripdata_%Y_%m.+\\.csv", years = years, months = months)
+  src <- list.files(attr(obj, "load_dir"), pattern = "yellow.+\\.csv", full.names = TRUE)
+  smart_upload(obj, src, tablenames = "yellow")
   invisible(obj)
 }
