@@ -11,7 +11,7 @@
 #' @seealso \code{\link[etl]{etl_extract}}
 #' @examples 
 #' 
-#' taxi <- etl("nyctaxi", dir = "~/dumps/nyctaxi/")
+#' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 #' \dontrun{
 #' taxi %>% 
 #'    etl_extract() %>% 
@@ -19,7 +19,9 @@
 #'    etl_load() 
 #' }
 
-etl_extract.etl_nyctaxi <- function(obj, year = 2016, month = 1, type  = "yellow", ...) {
+etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
+                                    months = 1:12, 
+                                    type  = "yellow", ...) {
   message("Extracting raw data...")
   raw_dir <- paste0(attr(obj, "dir"), "/raw")
   
@@ -29,3 +31,7 @@ etl_extract.etl_nyctaxi <- function(obj, year = 2016, month = 1, type  = "yellow
 
   invisible(obj)
 }
+
+#do we want to change type into types? 
+#to download both yellow and green cabs data by one commend?
+
