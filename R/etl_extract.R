@@ -1,11 +1,12 @@
 #' Extract data from NYC Taxi Trips
 #' 
 #' @import etl
+#' @importFrom stringr str_pad
 #' @export 
 #' @details extract data from NYC taxi trips 
 #' @param year a numeric vector giving the years
 #' @param month a numeric vector giving the months
-#' @param type a character vector of \code{yellow} or \code{green}. The default 
+#' @param types a character vector of \code{yellow} and/or \code{green}. The default 
 #' is \code{yellow}.
 #' @inheritParams etl::etl_extract
 #' @seealso \code{\link[etl]{etl_extract}}
@@ -21,13 +22,21 @@
 
 etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
                                     months = 1:12, 
-                                    type  = "yellow", ...) {
+                                    types  = "yellow", ...) {
   message("Extracting raw data...")
   raw_dir <- paste0(attr(obj, "dir"), "/raw")
   
-  remote <- paste0("https://s3.amazonaws.com/nyc-tlc/trip+data/", 
-                   type, "_tripdata_", year, "-0", month, ".csv")
-  etl::smart_download(obj, remote)
+  get_dates <- function(x, years, months) {
+    valid_year_month(years, months) %>%
+      mutate(type = x)
+  }
+  
+  remote <- lapply(types, get_dates, years, months) %>%
+    bind_rows() %>%
+    mutate(url = paste0("https://s3.amazonaws.com/nyc-tlc/trip+data/", 
+                  type, "_tripdata_", year, "-", stringr::str_pad(month, 2, "left", "0"), ".csv"))
+  
+  etl::smart_download(obj, remote$url)
 
   invisible(obj)
 }

@@ -9,7 +9,8 @@ Depends:
     R (>= 3.2.3),
     etl
 Imports:
-    DBI
+    DBI,
+    stringr
 License: CC0
 LazyData: true
 RoxygenNote: 5.0.1
