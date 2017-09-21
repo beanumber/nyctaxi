@@ -3,40 +3,41 @@
 \name{etl_extract.etl_nyctaxi}
 \alias{etl_extract.etl_nyctaxi}
 \alias{etl_load.etl_nyctaxi}
-\title{Extract data from NYC Taxi Trips}
+\title{Extract NYC Taxi Trip Data from data from NYC Taxi & Limousine Commission}
 \usage{
 \method{etl_extract}{etl_nyctaxi}(obj, years = as.numeric(format(Sys.Date(),
   "\%Y")), months = 1:12, types = "yellow", ...)
 
-\method{etl_load}{etl_nyctaxi}(obj, year = "2016", month = 1,
-  type = "yellow", ...)
+\method{etl_load}{etl_nyctaxi}(obj, years = as.numeric(format(Sys.Date(),
+  "\%Y")), months = 1:12, types = "yellow", ...)
 }
 \arguments{
 \item{obj}{an \code{\link{etl}} object}
 
-\item{types}{a character vector of \code{yellow} and/or \code{green}. The default 
-is \code{yellow}.}
+\item{years}{a numeric vector giving the years. The default is the most recent year.}
+
+\item{months}{a numeric vector giving the months. The default is January to December.}
+
+\item{types}{a character vector giving the type of taxi trip data of \code{yellow} 
+and/or \code{green}. The default is \code{yellow}.}
 
 \item{...}{arguments passed to methods}
-
-\item{year}{a numeric vector giving the years}
-
-\item{month}{a numeric vector giving the months}
 }
 \description{
-Extract data from NYC Taxi Trips
+Extract NYC Taxi Trip Data from data from NYC Taxi & Limousine Commission
 }
 \details{
-extract data from NYC taxi trips
+extract NYC Yellow taxi trip data from Jan 2009 and 
+Green taxi trip data from Aug 2013 data from NYC Taxi & Limousine Commission
 }
 \examples{
 
 taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 \dontrun{
 taxi \%>\% 
-   etl_extract() \%>\% 
-   etl_transform() \%>\% 
-   etl_load() 
+   etl_extract(years = 2016, months = 1:2, types = "yellow") \%>\% 
+   etl_transform(years = 2016, months = 1:2, types = "yellow") \%>\% 
+   etl_load(years = 2016, months = 1:2, types = "yellow") 
 }
 }
 \seealso{
