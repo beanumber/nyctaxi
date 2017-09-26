@@ -18,7 +18,7 @@ get_file_path <- function(years, months, types, path) {
   
   remote <- lapply(types, get_dates, years, months) %>%
     bind_rows() %>%
-    mutate(url = paste0(path, type, "_tripdata_", year, "-", 
+    mutate(src = paste0(path, type, "_tripdata_", year, "-", 
                         stringr::str_pad(month, 2, "left", "0"), ".csv"))
 
 }

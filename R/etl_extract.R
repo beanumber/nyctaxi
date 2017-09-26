@@ -18,7 +18,7 @@
 #' \dontrun{
 #' taxi %>% 
 #'    etl_extract(years = 2016, months = 1:2, types = "yellow") %>% 
-#'    etl_transform(years = 2016, months = 1:2, types = "yellow") %>% 
+#'    etl_transform(years = 2016, months = 1, types = "yellow") %>% 
 #'    etl_load(years = 2016, months = 1:2, types = "yellow") 
 #' }
 
@@ -26,22 +26,10 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
                                     months = 1:12, 
                                     types  = "yellow", ...) {
   message("Extracting raw data...")
-  raw_dir <- paste0(attr(obj, "dir"), "/raw")
   
   remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data/") 
     
-  # get_dates <- function(x, years, months) {
-  #   valid_year_month(years, months) %>%
-  #     mutate(type = x)
-  # }
-  # 
-  # remote <- lapply(types, get_dates, years, months) %>%
-  #   bind_rows() %>%
-  #   mutate(url = paste0("https://s3.amazonaws.com/nyc-tlc/trip+data/", 
-  #                 type, "_tripdata_", year, "-", 
-  #                 stringr::str_pad(month, 2, "left", "0"), ".csv"))
-  
-  etl::smart_download(obj, remote$url)
+  etl::smart_download(obj, remote$src)
 
   invisible(obj)
 }

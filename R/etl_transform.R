@@ -12,26 +12,25 @@
 #' @seealso \code{\link[etl]{etl_transform}}
 
 
-etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
+etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
                                     months = 1:12, 
                                     types  = "yellow", ...) {
-  message("Extracting raw data...")
-  raw_dir <- paste0(attr(obj, "dir"), "/raw")
   
-  remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data/") 
+  message("Transforming data in raw directory into load directory...")
   
-  # get_dates <- function(x, years, months) {
-  #   valid_year_month(years, months) %>%
-  #     mutate(type = x)
-  # }
-  # 
-  # remote <- lapply(types, get_dates, years, months) %>%
-  #   bind_rows() %>%
-  #   mutate(url = paste0("https://s3.amazonaws.com/nyc-tlc/trip+data/", 
-  #                 type, "_tripdata_", year, "-", 
-  #                 stringr::str_pad(month, 2, "left", "0"), ".csv"))
+  #create a df of file path of the files that the user wants to transform
+  remote <- get_file_path(years, months, types, path = paste0(attr(obj, "dir"), "/raw/")) 
   
-  etl::smart_download(obj, remote$url)
+  #create a df of file path of the files that are in the raw directory
+  src <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = TRUE)
+  source <- data.frame(src)
+  
+  #only keep the files thst the user wants to transform
+  remote_small <- inner_join(remote, source, by = "src")
+  
+  lcl <- file.path(attr(obj, "load_dir"), basename(remote_small$src))
+  
+  file.copy(from = remote_small$src, to = lcl)
   
   invisible(obj)
 }
