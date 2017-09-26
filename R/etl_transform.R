@@ -1,7 +1,6 @@
 #' @import etl
 #' @export
 #' @rdname etl_extract.etl_nyctaxi
-#' @importFrom 
 #' @details transform NYC Yellow taxi trip data from raw directory to load directory
 #' @param etl an etl object 
 #' @param years a numeric vector giving the years. The default is the most recent year.
