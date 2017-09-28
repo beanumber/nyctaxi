@@ -25,9 +25,10 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
   src <- data.frame(src)
   
   #only keep the files thst the user wants to transform
-  src_small <- inner_join(remote,src,by = "src")
+  src_small <- inner_join(remote, src, by = "src")
   
-  mapply(DBI::dbWriteTable, name = src_small$type, value = src_small$src,
+  mapply(DBI::dbWriteTable, 
+         name = src_small$type, value = src_small$src, 
          MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
   
   #smart_upload(obj, src = remote$src, tablenames = remote$type)

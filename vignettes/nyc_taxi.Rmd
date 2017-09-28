@@ -35,7 +35,7 @@ head(green_2016_01_sample)
 To access data during wider time spans, make use of the ['etl' package](https://github.com/beanumber/etl) to download the data and import it into a database. Please see the documentation for 'etl_extract' for further details and examples.
 
 ```{r}
-help("etl_extract")
+help("etl_extract.etl_nyctaxi")
 ```
 
 ## Using the NYC Green Taxi Trip Data

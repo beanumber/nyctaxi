@@ -30,6 +30,9 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
   
   file.copy(from = src_small, to = lcl)
+  # check that second line IS blank, and the do this
+  cmds <- paste("sed -i -e '2d'", lcl)
+  lapply(cmds, system)
   
   invisible(obj)
 }
