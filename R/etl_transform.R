@@ -15,7 +15,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
                                     months = 1:12, 
                                     types  = "yellow", ...) {
   
-  message("Transforming data in raw directory into load directory...")
+  message("Transforming data from raw directory to load directory...")
   
   #create a df of file path of the files that the user wants to transform
   remote <- get_file_path(years, months, types, path = attr(obj, "raw_dir")) 
@@ -24,12 +24,12 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   src <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = TRUE)
   
   #only keep the files thst the user wants to transform
-  src <- intersect(src, remote$src)
+  src_small <- intersect(src, remote$src)
   
   #find the load directory
-  lcl <- file.path(attr(obj, "load_dir"), basename(src))
+  lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
   
-  file.copy(from = src, to = lcl)
+  file.copy(from = src_small, to = lcl)
   
   invisible(obj)
 }
