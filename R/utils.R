@@ -1,5 +1,4 @@
-#' 
-#' @import etl
+#' Utility function that generates file paths
 #' @description Take in arguments common to all three functions 
 #' (e.g. years, months, types) as well as the stem of the URL and 
 #' return the matched file paths.
