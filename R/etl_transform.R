@@ -22,14 +22,14 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   
   #create a df of file path of the files that are in the raw directory
   src <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = TRUE)
-  source <- data.frame(src)
   
   #only keep the files thst the user wants to transform
-  remote_small <- inner_join(remote, source, by = "src")
+  src <- intersect(src, remote$src)
   
-  lcl <- file.path(attr(obj, "load_dir"), basename(remote_small$src))
+  #find the load directory
+  lcl <- file.path(attr(obj, "load_dir"), basename(src))
   
-  file.copy(from = remote_small$src, to = lcl)
+  file.copy(from = src, to = lcl)
   
   invisible(obj)
 }
