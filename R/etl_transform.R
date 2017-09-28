@@ -18,7 +18,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   message("Transforming data in raw directory into load directory...")
   
   #create a df of file path of the files that the user wants to transform
-  remote <- get_file_path(years, months, types, path = paste0(attr(obj, "dir"), "/raw/")) 
+  remote <- get_file_path(years, months, types, path = attr(obj, "raw_dir")) 
   
   #create a df of file path of the files that are in the raw directory
   src <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = TRUE)

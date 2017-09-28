@@ -27,7 +27,7 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
                                     types  = "yellow", ...) {
   message("Extracting raw data...")
   
-  remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data/") 
+  remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
     
   etl::smart_download(obj, remote$src)
 
