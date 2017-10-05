@@ -4,10 +4,6 @@
 #' @importFrom DBI dbWriteTable
 #' @details load NYC Yellow taxi trip data from load directory into a sql database, 
 #' the default is a sqlite database
-#' @param obj an etl object 
-#' @param years a numeric vector giving the years. The default is the most recent year.
-#' @param months a numeric vector giving the months. The default is January to December.
-#' @param types a character vector giving the type of taxi trip data of \code{yellow} 
 #' and/or \code{green}. The default is \code{yellow}.
 #' @inheritParams get_file_path
 #' @seealso \code{\link[etl]{etl_load}}

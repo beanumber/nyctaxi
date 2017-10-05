@@ -2,10 +2,6 @@
 #' @export
 #' @rdname etl_extract.etl_nyctaxi
 #' @details transform NYC Yellow taxi trip data from raw directory to load directory
-#' @param etl an etl object 
-#' @param years a numeric vector giving the years. The default is the most recent year.
-#' @param months a numeric vector giving the months. The default is January to December.
-#' @param types a character vector giving the type of taxi trip data of \code{yellow} 
 #' and/or \code{green}. The default is \code{yellow}.
 #' @inheritParams get_file_path
 #' @seealso \code{\link[etl]{etl_transform}}
