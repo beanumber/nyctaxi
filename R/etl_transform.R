@@ -22,14 +22,20 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   #only keep the files thst the user wants to transform
   src_small <- intersect(src, remote$src)
   
-  #find the load directory
-  lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
+  if (length(src_small) == 0) {
+    message("The files you requested are not available in the raw directory.")
+  } else {
+    #find the load directory
+    lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
+    
+    file.copy(from = src_small, to = lcl)
+  }
   
-  file.copy(from = src_small, to = lcl)
-  # check that second line IS blank, and the do this
+  # check that second line is blank, and then do this
   cmds <- paste("sed -i -e '2d'", lcl)
   lapply(cmds, system)
   
+  #is it caused by invisible obj?
   invisible(obj)
 }
 

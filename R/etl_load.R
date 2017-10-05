@@ -23,11 +23,13 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
   #only keep the files thst the user wants to transform
   src_small <- inner_join(remote, src, by = "src")
   
-  mapply(DBI::dbWriteTable, 
-         name = src_small$type, value = src_small$src, 
-         MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
-  
-  #smart_upload(obj, src = remote$src, tablenames = remote$type)
-  
+  if(nrow(src_small) == 0) {
+    message("The files you requested are not available in the load directory.")
+  } else {
+    mapply(DBI::dbWriteTable, 
+           name = src_small$type, value = src_small$src, 
+           MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
+  }
+
   invisible(obj)
 }
