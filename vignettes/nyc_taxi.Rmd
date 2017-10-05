@@ -1,5 +1,5 @@
 ---
-title: "Vignette Title"
+title: "NYC's Taxi and Limousine Commission (TLC) Trip Data"
 author: "Trang Le & Wencong (Priscilla) Li"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
