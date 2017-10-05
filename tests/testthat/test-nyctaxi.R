@@ -11,12 +11,13 @@ test_that("etl nyctaxi", {
   
 })
 
-test_that("etl nyctaxi mysql", {
-  #expect_equal(2 * 2, 4)
-  db <- src_mysql("nyctaxi", user = "WencongLi", host = "localhost", password = "P320718")
-  taxi <- etl("nyctaxi", db)
-  expect_s3_class(taxi,c("etl_nyctaxi","etl","src_mysql","src_sql","src"))
-  #taxi %>% etl_extract()
+test_that("mysql works", {
+  if (require(RMySQL) && mysqlHasDefault()) {
+    db <- src_mysql_cnf()
+    expect_s3_class(db, "src_dbi")
+    taxi <- etl("nyctaxi", db)
+    expect_s3_class(taxi,c("etl_nyctaxi","etl","src_mysql","src_sql","src"))
+  }
 })
 
 
