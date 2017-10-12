@@ -15,29 +15,29 @@
 #' or \code{yellow_2016_01_sample} data tables.
 #' 
 #' \describe{
-#'   \item{VendorID}{}
+#'   \item{VendorID}{A code indicating the LPEP provider that provided the record.1= Creative Mobile Technologies, LLC; 2= VeriFone Inc.}
+#'   \item{lpep_pickup_datetime}{The date and time when the meter was engaged.}
+#'   \item{lpep_dropoff_datetime}{The date and time when the meter was disengaged.}
 #'   \item{lpep_pickup_datetime}{Taxi pickup date and time}
 #'   \item{lpep_dropoff_datetime}{Taxi dropoff date and time}
-#'   \item{lpep_pickup_datetime}{Taxi pickup date and time}
-#'   \item{lpep_dropoff_datetime}{Taxi dropoff date and time}
-#'   \item{Store_and_fwd_flag}{}
-#'   \item{RareCodeID}{}
-#'   \item{Pickup_longitude}{Pickup location's longitude}
-#'   \item{Pickup_latitude}{Pickup location's latitude}
-#'   \item{Dropoff_longtitude}{Dropoff location's longitude}
-#'   \item{Dropoff_latitude}{Dropoff location's latitude}
-#'   \item{Passenger_count}{Number of passengers for a trip}
-#'   \item{Trip_distance}{The trip distance in miles}
-#'   \item{Fare_amount}{The price of a trip}
-#'   \item{Extra}{Extra fee charged for a trip}
-#'   \item{MTA_tax}{}
-#'   \item{Tip_amount}{The amount of tips paid by the passenger(s)}
-#'   \item{Tolls_amount}{}
-#'   \item{Ehail_fee}{}
-#'   \item{improvement_surcharge}{}
-#'   \item{Total amount}{Total amount paid for a trip}
-#'   \item{Payment_type}{}
-#'   \item{Trip_type}{}
+#'   \item{Store_and_fwd_flag}{This flag indicates whether the trip record was held in vehicle memory before sending to the vendor, aka “store and forward,” because the vehicle did not have a connection to the server. Y= store and forward trip, N= not a store and forward trip}
+#'   \item{RareCodeID}{The final rate code in effect at the end of the trip. 1= Standard rate, 2=JFK, 3=Newark, 4=Nassau or Westchester, 5=Negotiated fare, 6=Group ride}
+#'   \item{Pickup_longitude}{Longitude where the meter was engaged.}
+#'   \item{Pickup_latitude}{Latitude where the meter was engaged.}
+#'   \item{Dropoff_longtitude}{Longitude where the meter was timed off.}
+#'   \item{Dropoff_latitude}{Latitude where the meter was timed off.}
+#'   \item{Passenger_count}{The number of passengers in the vehicle. This is a driver-entered value.}
+#'   \item{Trip_distance}{The elapsed trip distance in miles reported by the taximeter.}
+#'   \item{Fare_amount}{The time-and-distance fare calculated by the meter.}
+#'   \item{Extra}{Miscellaneous extras and surcharges. Currently, this only includes the $0.50 and $1 rush hour and overnight charges.}
+#'   \item{MTA_tax}{$0.50 MTA tax that is automatically triggered based on the metered rate in use.}
+#'   \item{Tip_amount}{Tip amount – This field is automatically populated for credit card tips. Cash tips are not included.}
+#'   \item{Tolls_amount}{Total amount of all tolls paid in trip.}
+#'   \item{Ehail_fee}{NA}
+#'   \item{improvement_surcharge}{$0.30 improvement surcharge assessed on hailed trips at the flag drop. The improvement surcharge began being levied in 2015.}
+#'   \item{Total amount}{The total amount charged to passengers. Does not include cash tips.}
+#'   \item{Payment_type}{A numeric code signifying how the passenger paid for the trip. 1= Credit card, 2= Cash, 3= No charge, 4= Dispute, 5= Unknown, 6= Voided trip}
+#'   \item{Trip_type}{A code indicating whether the trip was a street-hail or a dispatch that is automatically assigned based on the metered rate in use but can be altered by the driver. 1= Street-hail, 2= Dispatch}
 #' }
 #' 
 #' @source These data are recorded at \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml} 
