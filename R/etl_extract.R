@@ -19,7 +19,7 @@
 #' taxi %>% 
 #'    etl_extract(years = 2016, months = 1:2, types = c("yellow","green")) %>% 
 #'    etl_transform(years = 2016, months = 1:2, types = c("yellow","green")) %>% 
-#'    etl_load(years = 2016, months = 1:2, types = "yellow") 
+#'    etl_load(years = 2016, months = 1:2, types = c("yellow","green")) 
 #' }
 
 etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
