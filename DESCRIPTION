@@ -10,6 +10,8 @@ Depends:
     etl
 Imports:
     DBI,
+    dplyr,
+    rlang,
     stringr
 License: CC0
 LazyData: true

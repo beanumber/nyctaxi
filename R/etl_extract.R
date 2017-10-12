@@ -9,6 +9,7 @@
 #' @param years a numeric vector giving the years. The default is the most recent year.
 #' @param months a numeric vector giving the months. The default is January to December.
 #' @param types a character vector giving the type of taxi trip data of \code{yellow} 
+#' @param ... arguments passed to \code{\link[etl]{smart_download}}
 #' and/or \code{green}. The default is \code{yellow}.
 #' @inheritParams get_file_path
 #' @seealso \code{\link[etl]{etl_extract}}
@@ -29,7 +30,7 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
   
   remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
     
-  etl::smart_download(obj, remote$src)
+  etl::smart_download(obj, remote$src, ...)
 
   invisible(obj)
 }

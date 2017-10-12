@@ -2,10 +2,8 @@
 #' @description Take in arguments common to all three functions 
 #' (e.g. years, months, types) as well as the stem of the URL and 
 #' return the matched file paths.
-#' @param years 
-#' @param months 
-#' @param types 
-#' @param path 
+#' @inheritParams etl_extract.etl_nyctaxi
+#' @param path path to desired file
 #' @export
 
 get_file_path <- function(years, months, types, path) {

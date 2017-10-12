@@ -22,25 +22,9 @@
 
 \item{months}{a numeric vector giving the months. The default is January to December.}
 
-\item{types}{a character vector giving the type of taxi trip data of \code{yellow} 
-and/or \code{green}. The default is \code{yellow}.}
+\item{types}{a character vector giving the type of taxi trip data of \code{yellow}}
 
-\item{obj}{an etl object}
-
-\item{years}{a numeric vector giving the years. The default is the most recent year.}
-
-\item{months}{a numeric vector giving the months. The default is January to December.}
-
-\item{types}{a character vector giving the type of taxi trip data of \code{yellow} 
-and/or \code{green}. The default is \code{yellow}.}
-
-\item{etl}{an etl object}
-
-\item{years}{a numeric vector giving the years. The default is the most recent year.}
-
-\item{months}{a numeric vector giving the months. The default is January to December.}
-
-\item{types}{a character vector giving the type of taxi trip data of \code{yellow} 
+\item{...}{arguments passed to \code{\link[etl]{smart_download}}
 and/or \code{green}. The default is \code{yellow}.}
 }
 \description{
@@ -52,8 +36,10 @@ Green taxi trip data from Aug 2013 data from NYC Taxi & Limousine Commission
 
 load NYC Yellow taxi trip data from load directory into a sql database, 
 the default is a sqlite database
+and/or \code{green}. The default is \code{yellow}.
 
 transform NYC Yellow taxi trip data from raw directory to load directory
+and/or \code{green}. The default is \code{yellow}.
 }
 \examples{
 
@@ -61,8 +47,8 @@ taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 \dontrun{
 taxi \%>\% 
    etl_extract(years = 2016, months = 1:2, types = c("yellow","green")) \%>\% 
-   etl_transform(years = 2016, months = 1, types = c("yellow","green")) \%>\% 
-   etl_load(years = 2016, months = 1:2, types = "yellow") 
+   etl_transform(years = 2016, months = 1:2, types = c("yellow","green")) \%>\% 
+   etl_load(years = 2016, months = 1:2, types = c("yellow","green")) 
 }
 }
 \seealso{
