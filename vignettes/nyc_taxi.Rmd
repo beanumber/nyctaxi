@@ -38,6 +38,15 @@ To access data during wider time spans, make use of the ['etl' package](https://
 help("etl_extract.etl_nyctaxi")
 ```
 
+The code below creates a directory on your local desktop and downloads NYC taxicab trip data from Janaury, 2016 to your local directory. It also transforms/cleans the data and loads it to a sqlite database.  
+```{r, eval=FALSE}
+taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
+
+taxi %>%
+  etl_extract(years = 2016, months = 1, types = c("green")) %>% 
+  etl_transform(years = 2016, months = 1, types = c("green")) %>% 
+  etl_load(years = 2016, months = 1, types = "green")}
+```
 ## Using the NYC Green Taxi Trip Data
 
 ```{r}
