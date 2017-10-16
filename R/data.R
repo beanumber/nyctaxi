@@ -41,7 +41,7 @@
 #' }
 #' 
 #' @source These data are recorded at \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml} 
-#' 
+#' @references The description of the data is available on \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml} 
 "green_2016_01_sample"
 
 #' @rdname green_2016_01_sample
