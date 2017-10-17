@@ -64,11 +64,10 @@ if (require(dplyr) & require(ggplot2)) {
 }
 
 }
-\author{
-Wencong (Priscilla) Li
-}
 \references{
 The description of the data is available on \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml}
 }
+\author{
+Wencong (Priscilla) Li
+}
 \keyword{datasets}
-

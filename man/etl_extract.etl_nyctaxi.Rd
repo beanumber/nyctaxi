@@ -58,4 +58,3 @@ taxi \%>\%
 
 \code{\link[etl]{etl_transform}}
 }
-

@@ -1,6 +1,6 @@
 Package: nyctaxi
 Title: Use the NYC Taxi Data
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Authors@R: c(person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut", "cre")),
     person("Wencong Priscilla", "Li", email = "liwencong1995@gmail.com", role = c("aut")),
     person("Trang", "Le", email = "trang.lt157@gmail.com", role = c("aut")))
@@ -16,7 +16,7 @@ Imports:
     stringr
 License: CC0
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Suggests:
     testthat,
     knitr,

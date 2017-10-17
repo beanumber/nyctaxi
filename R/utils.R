@@ -5,6 +5,9 @@
 #' @inheritParams etl_extract.etl_nyctaxi
 #' @param path path to desired file
 #' @export
+#' @examples 
+#' get_file_path(2017, 1:6, "yellow", "~/")
+#' 
 
 get_file_path <- function(years, months, types, path) {
   
@@ -15,7 +18,7 @@ get_file_path <- function(years, months, types, path) {
   
   lapply(types, get_dates, years, months) %>%
     bind_rows() %>%
-    mutate(src = file.path(path, paste0(type, "_tripdata_", year, "-", 
+    mutate_(src = ~file.path(path, paste0(type, "_tripdata_", year, "-", 
                         stringr::str_pad(month, 2, "left", "0"), ".csv")))
 }
 
