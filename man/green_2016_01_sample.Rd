@@ -29,7 +29,7 @@ or \code{yellow_2016_01_sample} data tables.
   \item{MTA_tax}{$0.50 MTA tax that is automatically triggered based on the metered rate in use.}
   \item{Tip_amount}{Tip amount – This field is automatically populated for credit card tips. Cash tips are not included.}
   \item{Tolls_amount}{Total amount of all tolls paid in trip.}
-  \item{Ehail_fee}{NA}
+  \item{Ehail_fee}{The description of this variable is not available on TLC website.}
   \item{improvement_surcharge}{$0.30 improvement surcharge assessed on hailed trips at the flag drop. The improvement surcharge began being levied in 2015.}
   \item{Total amount}{The total amount charged to passengers. Does not include cash tips.}
   \item{Payment_type}{A numeric code signifying how the passenger paid for the trip. 1= Credit card, 2= Cash, 3= No charge, 4= Dispute, 5= Unknown, 6= Voided trip}
@@ -66,6 +66,9 @@ if (require(dplyr) & require(ggplot2)) {
 }
 \author{
 Wencong (Priscilla) Li
+}
+\references{
+The description of the data is available on \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml}
 }
 \keyword{datasets}
 

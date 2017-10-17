@@ -15,8 +15,8 @@ get_file_path <- function(years, months, types, path) {
   
   lapply(types, get_dates, years, months) %>%
     bind_rows() %>%
-    mutate(src = file.path(path, paste0(rlang::.data$type, "_tripdata_", rlang::.data$year, "-", 
-                        stringr::str_pad(rlang::.data$month, 2, "left", "0"), ".csv")))
+    mutate(src = file.path(path, paste0(type, "_tripdata_", year, "-", 
+                        stringr::str_pad(month, 2, "left", "0"), ".csv")))
 }
 
 
