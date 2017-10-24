@@ -15,8 +15,9 @@
 #' @seealso \code{\link[etl]{etl_extract}}
 #' @examples 
 #' 
-#' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
+#' 
 #' \dontrun{
+#' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 #' taxi %>% 
 #'    etl_extract(years = 2016, months = 1:2, types = c("yellow","green")) %>% 
 #'    etl_transform(years = 2016, months = 1:2, types = c("yellow","green")) %>% 
