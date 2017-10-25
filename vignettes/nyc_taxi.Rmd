@@ -11,7 +11,7 @@ vignette: >
 
 ## NYC Taxi
 
-NYC's [Taxi and Limousine Commission (TLC)](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) Trip Data is a collection of trip records including fields capturing pick-up and drop-off locations, times, trip distances, fares, rate types, and driver-reported passenger counts. The data was collected and provided to the NYC TLC by technology providers under the Taxicab & Livery Passenger Enhancement Programs. 
+NYC's Taxi and Limousine Commission Trip Data <http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml> is a collection of trip records including fields capturing pick-up and drop-off locations, times, trip distances, fares, rate types, and driver-reported passenger counts. The data was collected and provided to the NYC TLC by technology providers under the Taxicab & [Livery Passenger Enhancement Programs <http://www.nyc.gov/html/tlc/html/industry/shl.shtml>. 
 
 ## Getting started
 To start using the package, load the 'nyctaxi' package into your R session. Since the 'nyctaxi' package currently lives on GitHub and not on CRAN, you have to install it using 'devtools'.
