@@ -5,8 +5,12 @@ Date: 2017-10-24
 Authors@R: c(person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut")),
     person("Wencong Priscilla", "Li", email = "liwencong1995@gmail.com", role = c("aut","cre")),
     person("Trang", "Le", email = "trang.lt157@gmail.com", role = c("aut")))
-Description: New York City's Taxi and Limousine Commission (TLC) Trip Data is a collection of green and yellow taxi trip records including fields capturing pick-up and drop-off locations, times, trip distances, fares, rate types, and driver-reported passenger counts. 
-    The data was collected and provided to the NYC TLC by technology providers under the Taxicab & Livery Passenger Enhancement Programs.This package helps users to download New York City Trip Data.
+Description: New York City's Taxi and Limousine Commission (TLC) Trip Data 
+    <http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml> is a 
+    collection of green and yellow taxi trip data. The data was collected 
+    and provided by technology providers under the Taxicab & 
+    Livery Passenger Enhancement Programs <http://www.nyc.gov/html/tlc/html/industry/shl.shtml>.
+    This package helps users to download New York City Trip Data.
 Depends:
     R (>= 3.2.3),
     etl
