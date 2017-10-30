@@ -14,7 +14,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
                                  types  = "yellow", ...) {
   #deal with the blank row in green taxi cab data
   remote <- get_file_path(years, months, types, path = attr(obj, "load_dir")) %>%
-    dplyr::mutate(skip = ifelse(rlang::.data$type == "green", 1, 0))
+    dplyr::mutate_(skip = ~ifelse(type == "green", 1, 0))
   
   #create a df of file path of the files that are in the load directory
   src <- list.files(attr(obj, "load_dir"), "\\.csv", full.names = TRUE)

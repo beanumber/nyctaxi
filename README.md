@@ -3,6 +3,8 @@ New York City Taxi
 
 [![Travis-CI Build Status](https://travis-ci.org/beanumber/nyctaxi.svg?branch=master)](https://travis-ci.org/beanumber/nyctaxi)
 
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/nyctaxi)](https://cran.r-project.org/package=nyctaxi)
+
 nyctaxi
 =======
 
