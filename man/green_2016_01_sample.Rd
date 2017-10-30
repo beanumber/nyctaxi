@@ -4,10 +4,9 @@
 \name{green_2016_01_sample}
 \alias{green_2016_01_sample}
 \alias{yellow_2016_01_sample}
-\alias{taxi_zone_lookup}
 \title{NYC Taxi trip data from NYC's Taxi and Limousine Commission (TLC)}
-\format{The first two dataframes (\code{\link[dplyr]{tbl_df}}) both have 1,000 rows and 21 or 19 variables, accordingly.
-`taxi-zone-lookup` has 265 rows and 3 variables.
+\format{Each one of the two dataframes (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 21 or 19 variables, accordingly.
+
 
 The following variables are values that are found in one of the three data tables: \code{green_2016_01_sample},
 \code{yellow_2016_01_sample}, and \code{taxi_zone_lookup}.

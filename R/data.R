@@ -10,8 +10,8 @@
 #' technology providers under the Taxicab & Livery Passenger Enhancement Programs. 
 #' 
 #' @docType data
-#' @format The first two dataframes (\code{\link[dplyr]{tbl_df}}) both have 1,000 rows and 21 or 19 variables, accordingly.
-#' `taxi-zone-lookup` has 265 rows and 3 variables.
+#' @format Each one of the two dataframes (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 21 or 19 variables, accordingly.
+#' 
 #' 
 #' The following variables are values that are found in one of the three data tables: \code{green_2016_01_sample},
 #' \code{yellow_2016_01_sample}, and \code{taxi_zone_lookup}.
@@ -59,19 +59,17 @@
 #' 
 "yellow_2016_01_sample"
 
-#' 
-#' 
-"taxi_zone_lookup"
 
 #' TLC taxi zone location IDs and corresponding boroughs and zone
 #' @description #' The third table `taxi-zone-lookup` shows the taxi `Zone` and `Borough` 
 #' for each `locationID`. For trip record data including TLC taxi zone location IDs, 
 #' location names and corresponding boroughs for each ID can be found in this data table.
 #'
-#' @format 
+#' @format TLC taxi borough information.
 #' \describe{
 #'   \item{LocationID}{TLC taxi zone LocationID.}
 #'   \item{Borough}{Borough corresponding to a TLC taxi zone LocationID.}
 #'   \item{Zone}{Zone corresponding to a TLC taxi zone LocationID.}
 #' }
-#'   
+#' @source The data is available at \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml}  
+"taxi_zone_lookup"
