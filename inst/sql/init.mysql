@@ -1,18 +1,18 @@
 DROP TABLE IF EXISTS `yellow`;
->
+
 CREATE TABLE `yellow` (
- `VendorID` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
+ `VendorID` tinyint DEFAULT NULL,
  `tpep_pickup_datetime` DATETIME NOT NULL,
  `tpep_dropoff_datetime` DATETIME NOT NULL,
- `passenger_count` smallint(4) DEFAULT NULL,
+ `passenger_count` tinyint DEFAULT NULL,
  `trip_distance` float(10,2) DEFAULT NULL,
- `pickup_longitude` double(10,6) DEFAULT NULL,
- `pickup_latitude` double(10,6) DEFAULT NULL,
- `RatecodeID` smallint(4) DEFAULT NULL,
- `store_and_fwd_flag` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
- `dropoff_longitude` double(10,6) DEFAULT NULL,
- `dropoff_latitude` double(10,6) DEFAULT NULL,
- `payment_type` smallint(4) DEFAULT NULL,
+ `pickup_longitude` double(2,5) DEFAULT NULL,
+ `pickup_latitude` double(2,5) DEFAULT NULL,
+ `RatecodeID` tinyint DEFAULT NULL,
+ `store_and_fwd_flag` varchar(10) COLLATE latin1_general_ci DEFAULT NULL,
+ `dropoff_longitude` double(2,5) DEFAULT NULL,
+ `dropoff_latitude` double(2,5) DEFAULT NULL,
+ `payment_type` tinyint DEFAULT NULL,
  `fare_amount` decimal(5,3) DEFAULT NULL,
  `extra` decimal(5,3) DEFAULT NULL,
  `mta_tax` decimal(5,3) DEFAULT NULL,
@@ -28,18 +28,18 @@ CREATE TABLE `yellow` (
 
 
 DROP TABLE IF EXISTS `green`;
->
+
 CREATE TABLE `green` (
- `VendorID` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
+ `VendorID` tinyint DEFAULT NULL,
  `lpep_pickup_datetime` DATETIME NOT NULL,
  `Lpep_dropoff_datetime` DATETIME NOT NULL,
- `Store_and_fwd_flag` varchar(50) COLLATE latin1_general_ci DEFAULT NULL,
- `RatecodeID` smallint(4) DEFAULT NULL,
- `Pickup_longitude` double(10,6) DEFAULT NULL,
- `Pickup_latitude` double(10,6) DEFAULT NULL,
- `Dropoff_longitude` double(10,6) DEFAULT NULL,
- `Dropoff_latitude` double(10,6) DEFAULT NULL,
- `Passenger_count` smallint(4) DEFAULT NULL,
+ `Store_and_fwd_flag` varchar(10) COLLATE latin1_general_ci DEFAULT NULL,
+ `RatecodeID` tinyint DEFAULT NULL,
+ `Pickup_longitude` double(2,5) DEFAULT NULL,
+ `Pickup_latitude` double(2,5) DEFAULT NULL,
+ `Dropoff_longitude` double(2,5) DEFAULT NULL,
+ `Dropoff_latitude` double(2,5) DEFAULT NULL,
+ `Passenger_count` tinyint DEFAULT NULL,
  `Trip_distance` float(10,2) DEFAULT NULL,
  `Fare_amount` decimal(5,3) DEFAULT NULL,
  `Extra` decimal(5,3) DEFAULT NULL,
@@ -48,8 +48,8 @@ CREATE TABLE `green` (
  `Tolls_amount` decimal(5,3) DEFAULT NULL,
  `improvement_surcharge` decimal(5,3) DEFAULT NULL,
  `Total_amount` decimal(5,3) DEFAULT NULL,
- `Payment_type` smallint(4) DEFAULT NULL,
- `Trip_type` smallint(4) DEFAULT NULL,
+ `Payment_type` tinyint DEFAULT NULL,
+ `Trip_type` tinyint DEFAULT NULL,
  KEY `pickup_datetime` (`lpep_pickup_datetime`),
  KEY `dropoff_datetime` (`Lpep_dropoff_datetime`),
  KEY `trip_distance` (`Trip_distance`),

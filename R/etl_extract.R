@@ -26,12 +26,32 @@
 
 etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
                                     months = 1:12, 
-                                    types  = "yellow", ...) {
+                                    types  = "yellow", transportation = "taxi",...) {
   message("Extracting raw data...")
   
-  remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
+  
+  if (transportation == "taxi") {
+    remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
+    etl::smart_download(obj, remote$src, ...)
+  } if (transportation == "uber") {
+    path = "https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-apr14.csv"
+   
+  get_dates <- function(years, months) {
+      valid_year_month(years, months) %>%
+        mutate(type = types)
+    }
     
-  etl::smart_download(obj, remote$src, ...)
+    remote <- lapply(types, get_dates, years, months) %>%
+      bind_rows() %>%
+      mutate_(src = ~file.path(path, paste0(month,year)))
+    etl::smart_download(obj, remote$src, ...)
+  } if (transportation == "lyft") {
+    
+    etl::smart_download(obj, remote$src, ...)
+  } else {
+    warning("The transportation you specified does not exist...")
+  }
+  
 
   invisible(obj)
 }
