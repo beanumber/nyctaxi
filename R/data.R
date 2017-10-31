@@ -91,3 +91,8 @@
 #' }
 #' @source The data is available at \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml}  
 "taxi_zone_lookup"
+
+#' NYC Taxi Zone spatial data
+#' 
+#' @source https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip
+"taxi_zones"
