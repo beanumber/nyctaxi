@@ -5,17 +5,18 @@
 \alias{green_2016_01_sample}
 \alias{yellow_2016_01_sample}
 \title{NYC Taxi trip data from NYC's Taxi and Limousine Commission (TLC)}
-\format{This data frame (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 19 variables. The following variables are in \code{yellow_2016_01_sample}.
-
+\format{\code{yellow_2016_01_sample} datatable (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 19 variables.
+\code{green_2016_01_sample} datatable (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 21 variables. 
+The following variables are in \code{yellow_2016_01_sample} or \code{green_2016_01_sample}.
 \describe{
-  \item{VendorID}{A code indicating the LPEP provider that provided the record.1= Creative Mobile Technologies, LLC; 2= VeriFone Inc.}
+  \item{vendorid}{A code indicating the LPEP provider that provided the record.1= Creative Mobile Technologies, LLC; 2= VeriFone Inc.}
   \item{tpep_pickup_datetime}{The date and time when the meter was engaged.}
   \item{tpep_dropoff_datetime}{The date and time when the meter was disengaged.}
   \item{passenger_count}{The number of passengers in the vehicle. This is a driver-entered value.}
   \item{trip_distance}{The elapsed trip distance in miles reported by the taximeter.}
-  \item{Pickup_longitude}{Longitude where the meter was engaged.}
-  \item{Pickup_latitude}{Latitude where the meter was engaged.}
-  \item{RareCodeID}{The final rate code in effect at the end of the trip. 1= Standard rate, 2=JFK, 3=Newark, 4=Nassau or Westchester, 5=Negotiated fare, 6=Group ride}
+  \item{pickup_longitude}{Longitude where the meter was engaged.}
+  \item{pickup_latitude}{Latitude where the meter was engaged.}
+  \item{ratecodeid}{The final rate code in effect at the end of the trip. 1= Standard rate, 2=JFK, 3=Newark, 4=Nassau or Westchester, 5=Negotiated fare, 6=Group ride}
   \item{store_and_fwd_flag}{This flag indicates whether the trip record was held in vehicle memory before sending to the vendor, aka "store and forward," because the vehicle did not have a connection to the server. Y= store and forward trip, N= not a store and forward trip}
   \item{dropoff_longtitude}{Longitude where the meter was timed off.}
   \item{dropoff_latitude}{Latitude where the meter was timed off.}
@@ -27,6 +28,8 @@
   \item{tolls_amount}{Total amount of all tolls paid in trip.}
   \item{improvement_surcharge}{$0.30 improvement surcharge assessed on hailed trips at the flag drop. The improvement surcharge began being levied in 2015.}
   \item{total_amount}{The total amount charged to passengers. Does not include cash tips.}
+  \item{ehail_fee}{The description of this variable is not available on TLC website.}
+  \item{trip_type}{A code indicating whether the trip was a street-hail or a dispatch that is automatically assigned based on the metered rate in use but can be altered by the driver. 1= Street-hail, 2= Dispatch}
 }}
 \source{
 These data are recorded at \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml}
@@ -56,7 +59,6 @@ if (require(dplyr) & require(ggplot2)) {
    ggplot(aes(x = Dropoff_longtitude, y = Pickup_latitude))
 }
 }
-
 
 }
 \references{

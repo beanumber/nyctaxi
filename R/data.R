@@ -10,17 +10,18 @@
 #' from the 2016 January green and yellow taxi trip data.
 #' 
 #' @docType data
-#' @format This data frame (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 19 variables. The following variables are in \code{yellow_2016_01_sample}.
-#' 
+#' @format \code{yellow_2016_01_sample} datatable (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 19 variables.
+#' \code{green_2016_01_sample} datatable (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 21 variables. 
+#' The following variables are in \code{yellow_2016_01_sample} or \code{green_2016_01_sample}.
 #' \describe{
-#'   \item{VendorID}{A code indicating the LPEP provider that provided the record.1= Creative Mobile Technologies, LLC; 2= VeriFone Inc.}
+#'   \item{vendorid}{A code indicating the LPEP provider that provided the record.1= Creative Mobile Technologies, LLC; 2= VeriFone Inc.}
 #'   \item{tpep_pickup_datetime}{The date and time when the meter was engaged.}
 #'   \item{tpep_dropoff_datetime}{The date and time when the meter was disengaged.}
 #'   \item{passenger_count}{The number of passengers in the vehicle. This is a driver-entered value.}
 #'   \item{trip_distance}{The elapsed trip distance in miles reported by the taximeter.}
-#'   \item{Pickup_longitude}{Longitude where the meter was engaged.}
-#'   \item{Pickup_latitude}{Latitude where the meter was engaged.}
-#'   \item{RareCodeID}{The final rate code in effect at the end of the trip. 1= Standard rate, 2=JFK, 3=Newark, 4=Nassau or Westchester, 5=Negotiated fare, 6=Group ride}
+#'   \item{pickup_longitude}{Longitude where the meter was engaged.}
+#'   \item{pickup_latitude}{Latitude where the meter was engaged.}
+#'   \item{ratecodeid}{The final rate code in effect at the end of the trip. 1= Standard rate, 2=JFK, 3=Newark, 4=Nassau or Westchester, 5=Negotiated fare, 6=Group ride}
 #'   \item{store_and_fwd_flag}{This flag indicates whether the trip record was held in vehicle memory before sending to the vendor, aka "store and forward," because the vehicle did not have a connection to the server. Y= store and forward trip, N= not a store and forward trip}
 #'   \item{dropoff_longtitude}{Longitude where the meter was timed off.}
 #'   \item{dropoff_latitude}{Latitude where the meter was timed off.}
@@ -32,6 +33,8 @@
 #'   \item{tolls_amount}{Total amount of all tolls paid in trip.}
 #'   \item{improvement_surcharge}{$0.30 improvement surcharge assessed on hailed trips at the flag drop. The improvement surcharge began being levied in 2015.}
 #'   \item{total_amount}{The total amount charged to passengers. Does not include cash tips.}
+#'   \item{ehail_fee}{The description of this variable is not available on TLC website.}
+#'   \item{trip_type}{A code indicating whether the trip was a street-hail or a dispatch that is automatically assigned based on the metered rate in use but can be altered by the driver. 1= Street-hail, 2= Dispatch}
 #' }
 #' 
 #' @source These data are recorded at \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml} 
@@ -49,41 +52,17 @@
 #' }
 #' }
 #' 
-#' 
-#' @format This datatable (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 21 variables. The following variables are in \code{green_2016_01_sample}.
-#' 
-#' \describe{
-#'   \item{VendorID}{A code indicating the LPEP provider that provided the record.1= Creative Mobile Technologies, LLC; 2= VeriFone Inc.}
-#'   \item{lpep_pickup_datetime}{The date and time when the meter was engaged.}
-#'   \item{Lpep_dropoff_datetime}{The date and time when the meter was disengaged.}
-#'   \item{Store_and_fwd_flag}{This flag indicates whether the trip record was held in vehicle memory before sending to the vendor, aka "store and forward," because the vehicle did not have a connection to the server. Y= store and forward trip, N= not a store and forward trip}
-#'   \item{RateCodeID}{The final rate code in effect at the end of the trip. 1= Standard rate, 2=JFK, 3=Newark, 4=Nassau or Westchester, 5=Negotiated fare, 6=Group ride}
-#'   \item{Pickup_longitude}{Longitude where the meter was engaged.}
-#'   \item{Pickup_latitude}{Latitude where the meter was engaged.}
-#'   \item{Dropoff_longtitude}{Longitude where the meter was timed off.}
-#'   \item{Dropoff_latitude}{Latitude where the meter was timed off.}
-#'   \item{Passenger_count}{The number of passengers in the vehicle. This is a driver-entered value.}
-#'   \item{Trip_distance}{The elapsed trip distance in miles reported by the taximeter.}
-#'   \item{Fare_amount}{The time-and-distance fare calculated by the meter.}
-#'   \item{Extra}{Miscellaneous extras and surcharges. Currently, this only includes the $0.50 and $1 rush hour and overnight charges.}
-#'   \item{MTA_tax}{$0.50 MTA tax that is automatically triggered based on the metered rate in use.}
-#'   \item{Tip_amount}{Tip amount - This field is automatically populated for credit card tips. Cash tips are not included.}
-#'   \item{Tolls_amount}{Total amount of all tolls paid in trip.}
-#'   \item{Ehail_fee}{The description of this variable is not available on TLC website.}
-#'   \item{improvement_surcharge}{$0.30 improvement surcharge assessed on hailed trips at the flag drop. The improvement surcharge began being levied in 2015.}
-#'   \item{Total amount}{The total amount charged to passengers. Does not include cash tips.}
-#'   \item{Payment_type}{A numeric code signifying how the passenger paid for the trip. 1= Credit card, 2= Cash, 3= No charge, 4= Dispute, 5= Unknown, 6= Voided trip}
-#'   \item{Trip_type}{A code indicating whether the trip was a street-hail or a dispatch that is automatically assigned based on the metered rate in use but can be altered by the driver. 1= Street-hail, 2= Dispatch}
-#' }
-#' 
 "yellow_2016_01_sample"
+
+
+
 
 #' TLC taxi zone location IDs and corresponding boroughs and zone
 #' @description #' The third table `taxi-zone-lookup` shows the taxi `Zone` and `Borough` 
 #' for each `locationID`. For trip record data including TLC taxi zone location IDs, 
 #' location names and corresponding boroughs for each ID can be found in this data table.
 #'
-#' @format TLC taxi borough information.
+#' @format TLC taxi zone information.
 #' \describe{
 #'   \item{LocationID}{TLC taxi zone LocationID.}
 #'   \item{Borough}{Borough corresponding to a TLC taxi zone LocationID.}
@@ -92,7 +71,17 @@
 #' @source The data is available at \url{http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml}  
 "taxi_zone_lookup"
 
+
 #' NYC Taxi Zone spatial data
+#' @format Spatial shapefiles of NYC Taxi Zones.
 #' 
+#' \describe{
+#'   \item{OBJECTID}{Object ID}
+#'   \item{Shape_Leng}{The length of the shape corresponding to a TLC taxi zone LocationID.}
+#'   \item{Shape_Area}{The area of the shape corresponding to a TLC taxi zone LocationID.}
+#'   \item{zone}{Zone corresponding to a TLC taxi zone LocationID.}
+#'   \item{LocationID}{TLC taxi zone LocationID.}
+#'   \item{borough}{Borough corresponding to a TLC taxi zone LocationID.}
+#' }
 #' @source https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip
 "taxi_zones"

@@ -4,7 +4,7 @@
 \name{taxi_zone_lookup}
 \alias{taxi_zone_lookup}
 \title{TLC taxi zone location IDs and corresponding boroughs and zone}
-\format{TLC taxi borough information.
+\format{TLC taxi zone information.
 \describe{
   \item{LocationID}{TLC taxi zone LocationID.}
   \item{Borough}{Borough corresponding to a TLC taxi zone LocationID.}

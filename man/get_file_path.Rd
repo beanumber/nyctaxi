@@ -11,7 +11,7 @@ get_file_path(years, months, types, path)
 
 \item{months}{a numeric vector giving the months. The default is January to December.}
 
-\item{types}{a character vector giving the type of taxi trip data of \code{yellow}}
+\item{types}{a character vector giving the type of taxi trip data of \code{yellow}.}
 
 \item{path}{path to desired file}
 }

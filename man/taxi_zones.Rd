@@ -4,7 +4,19 @@
 \name{taxi_zones}
 \alias{taxi_zones}
 \title{NYC Taxi Zone spatial data}
-\format{An object of class \code{SpatialPolygonsDataFrame} with 263 rows and 6 columns.}
+\format{Spatial shapefiles of NYC Taxi Zones.
+
+\describe{
+  \item{OBJECTID}{Object ID}
+  \item{Shape_Leng}{The length of the shape corresponding to a TLC taxi zone LocationID.}
+  \item{Shape_Area}{The area of the shape corresponding to a TLC taxi zone LocationID.}
+  \item{zone}{Zone corresponding to a TLC taxi zone LocationID.}
+  \item{LocationID}{TLC taxi zone LocationID.}
+  \item{borough}{Borough corresponding to a TLC taxi zone LocationID.}
+}}
+\source{
+https://s3.amazonaws.com/nyc-tlc/misc/taxi_zones.zip
+}
 \usage{
 taxi_zones
 }
