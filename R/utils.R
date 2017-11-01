@@ -22,5 +22,3 @@ get_file_path <- function(years, months, types, path) {
                         stringr::str_pad(month, 2, "left", "0"), ".csv")))
 }
 
-
-

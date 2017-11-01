@@ -14,6 +14,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   
   message("Transforming data from raw directory to load directory...")
   
+  #transform nyc taxi data----------------------------------------------------------------
   #create a df of file path of the files that the user wants to transform
   remote <- get_file_path(years, months, types, path = attr(obj, "raw_dir")) 
   remote_green <- remote %>% 
@@ -46,7 +47,16 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     file.copy(from = src_small, to = lcl)
   }
   
+  #transform uber datafile----------------------------------------------------------------
   
+  
+  #transform lyft datafile----------------------------------------------------------------
+  fileURL <- file.path(attr(obj, "raw_dir"), "juxc-sutg.csv")
+  if(file.exists(fileURL)){
+    file.rename(fileURL, file.path(attr(obj, "load_dir"), "lyft.csv"))
+  } else {
+      message("There is no Lyft data in the raw directory...")
+    }
   
   
   #is it caused by invisible obj?

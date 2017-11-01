@@ -7,7 +7,7 @@
 \title{Extract NYC Taxi Trip Data from data from NYC Taxi & Limousine Commission}
 \usage{
 \method{etl_extract}{etl_nyctaxi}(obj, years = as.numeric(format(Sys.Date(),
-  "\%Y")), months = 1:12, types = "yellow", ...)
+  "\%Y")), months = 1:12, types = "yellow", transportation = "taxi", ...)
 
 \method{etl_load}{etl_nyctaxi}(obj, years = as.numeric(format(Sys.Date(),
   "\%Y")), months = 1:12, types = "yellow", ...)
@@ -22,7 +22,10 @@
 
 \item{months}{a numeric vector giving the months. The default is January to December.}
 
-\item{types}{a character vector giving the type of taxi trip data of \code{yellow}}
+\item{types}{a character vector giving the type of taxi trip data of \code{yellow}.}
+
+\item{transportation}{a character variable giving the type of data the user wants to download. 
+There are three options: taxi, uber, and lyft.}
 
 \item{...}{arguments passed to \code{\link[etl]{smart_download}}
 and/or \code{green}. The default is \code{yellow}.}
@@ -47,9 +50,9 @@ and/or \code{green}. The default is \code{yellow}.
 \dontrun{
 taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 taxi \%>\% 
-   etl_extract(years = 2016, months = 1:2, types = c("yellow","green")) \%>\% 
-   etl_transform(years = 2016, months = 1:2, types = c("yellow","green")) \%>\% 
-   etl_load(years = 2016, months = 1:2, types = c("yellow","green")) 
+   etl_extract(years = 2015, months = 1, types = c("green"), transportation = "lyft") \%>\% 
+   etl_transform(years = 2015, months = 1, types = c("green")) \%>\% 
+   etl_load(years = 2015, months = 1, types = c("green")) 
 }
 }
 \seealso{
