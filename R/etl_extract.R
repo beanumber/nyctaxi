@@ -35,7 +35,11 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
   #TAXI-----------------------------------------------------------------------
   if (transportation == "taxi") {
     remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
-    etl::smart_download(obj, remote$src, ...)} 
+    tryCatch(etl::smart_download(obj, remote$src, ...),
+             error = function(e){warning(e)}, finally = warning("Some of the data you requested are not avaliable on TLC...")
+             )
+    
+    } 
   
   #UBER-----------------------------------------------------------------------
   else if (transportation == "uber") {
