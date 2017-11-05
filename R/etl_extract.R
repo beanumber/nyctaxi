@@ -39,33 +39,36 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
   
   #UBER-----------------------------------------------------------------------
   else if (transportation == "uber") {
-    raw_month <- etl::valid_year_month(years = 2014, months = 4:9)
+    raw_month_2014 <- etl::valid_year_month(years = 2014, months = 4:9)
+    raw_month_2015 <- etl::valid_year_month(years = 2015, months = 1:6)
+    raw_month <- bind_rows(raw_month_2014, raw_month_2015)
     path = "https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data"
     remote <- etl::valid_year_month(years, months)
+    remote_small <- intersect(raw_month, remote)
     
-    if (2015 %in% years) {
+    if ( 2015 %in% remote_small$year &&  2014 %in% remote_small$year) {
       #download 2015 data
       etl::smart_download(obj, "https://github.com/fivethirtyeight/uber-tlc-foil-response/blob/master/uber-trip-data/uber-raw-data-janjune-15.csv.zip")
       
-      #download other data
-      small <- inner_join(remote, raw_month)
-      small <- small %>%
-        filter_(year != 2015) %>%
+      #download 2014 data
+      small <- remote_small %>%
+        filter_(~year == 2014) %>%
         mutate_(month_abb = ~tolower(month.abb[month]),
                 src = ~file.path(path, paste0("uber-raw-data-",month_abb,
                                               substr(year,3,4),
                                               ".csv")))
       etl::smart_download(obj, small$src) 
-    } else {
+    } else if (2014 %in% remote_small$year && !(2015 %in% remote_small$year)) {
       #file paths
-      small <- inner_join(remote, raw_month)
-      small <- small %>%
+      small <- remote_small %>%
         mutate_(month_abb = ~tolower(month.abb[month]),
                 src = ~file.path(path, paste0("uber-raw-data-",month_abb,
                                               substr(year,3,4),
                                               ".csv")))
-      #download uber data
       etl::smart_download(obj, small$src) }
+    else {
+      warning("The Uber data you requested are not currently available. Only data from 2014/04-2014/09 and 2015/01-2015/06 are available...")
+    }
     } 
   
   #LYFT-----------------------------------------------------------------------
