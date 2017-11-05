@@ -48,7 +48,16 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   }
   
   #transform uber datafile----------------------------------------------------------------
-  
+  zipped_uberfileURL <- file.path(attr(obj, "raw_dir"), "uber-raw-data-janjune-15.csv.zip")
+  if(file.exists(zipped_uberfileURL)){
+    unzip(zipped_uberfileURL, exdir = file.path(attr(obj, "load_dir"),"uber_2015_01-06.csv"))
+  } 
+  else if( ){
+    
+  }
+  else {
+    message("There is no 2015 Uber data in the raw directory...")
+  }
   
   #transform lyft datafile----------------------------------------------------------------
   fileURL <- file.path(attr(obj, "raw_dir"), "juxc-sutg.csv")
