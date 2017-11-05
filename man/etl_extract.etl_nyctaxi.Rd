@@ -50,7 +50,7 @@ and/or \code{green}. The default is \code{yellow}.
 \dontrun{
 taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 taxi \%>\% 
-   etl_extract(years = 2015, months = 1, types = c("green"), transportation = "lyft") \%>\% 
+   etl_extract(years = 2014, months = 4, types = c("green"), transportation = "uber") \%>\% 
    etl_transform(years = 2015, months = 1, types = c("green")) \%>\% 
    etl_load(years = 2015, months = 1, types = c("green")) 
 }

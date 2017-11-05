@@ -21,7 +21,7 @@
 #' \dontrun{
 #' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 #' taxi %>% 
-#'    etl_extract(years = 2015, months = 1, types = c("green"), transportation = "lyft") %>% 
+#'    etl_extract(years = 2014, months = 4, types = c("green"), transportation = "uber") %>% 
 #'    etl_transform(years = 2015, months = 1, types = c("green")) %>% 
 #'    etl_load(years = 2015, months = 1, types = c("green")) 
 #' }
@@ -46,7 +46,7 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     remote <- etl::valid_year_month(years, months)
     remote_small <- intersect(raw_month, remote)
     
-    if ( 2015 %in% remote_small$year &&  2014 %in% remote_small$year) {
+    if (2015 %in% remote_small$year) {
       #download 2015 data
       etl::smart_download(obj, "https://github.com/fivethirtyeight/uber-tlc-foil-response/blob/master/uber-trip-data/uber-raw-data-janjune-15.csv.zip")
       
