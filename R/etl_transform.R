@@ -49,11 +49,23 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   
   #transform uber datafile----------------------------------------------------------------
   zipped_uberfileURL <- file.path(attr(obj, "raw_dir"), "uber-raw-data-janjune-15.csv.zip")
+  #creat a list of 2014 uber data file directory
+  uber14_list <- list.files(path = attr(obj, "raw_dir"), pattern = "14.csv")
+  
   if(file.exists(zipped_uberfileURL)){
-    unzip(zipped_uberfileURL, exdir = file.path(attr(obj, "load_dir"),"uber_2015_01-06.csv"))
+    unzip(zipped_uberfileURL, exdir = file.path(attr(obj, "load_dir"),"uber-raw-data-2015_01-06.csv"))
   } 
-  else if( ){
+  else if( length(uber14_list) != 0){
+    raw_file_path <- data.frame(uber14_list) %>%
+      mutate_(basename = ~attr(obj, "raw_dir")) %>%
+      mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
+        
+    load_file_path <- data.frame(uber14_list) %>%
+      mutate_(basename = ~attr(obj, "load_dir")) %>%
+      mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
     
+    #copy the files in the raw directory and paste them to the load directory
+    file.copy(from = raw_file_path$raw_file_dir, to = load_file_path$raw_file_dir)
   }
   else {
     message("There is no 2015 Uber data in the raw directory...")
