@@ -9,8 +9,8 @@
 #' @param years a numeric vector giving the years. The default is the most recent year.
 #' @param months a numeric vector giving the months. The default is January to December.
 #' @param types a character vector giving the type of taxi trip data of \code{yellow}.
-#' @param transportation a character variable giving the type of data the user wants to download. 
-#' There are three options: taxi, uber, and lyft.
+#' @param transportation a character variable of giving the type of data the user wants to download. 
+#' There are three options: taxi, uber, and lyft, and users can only choose one transportation at a time.
 #' @param ... arguments passed to \code{\link[etl]{smart_download}}
 #' and/or \code{green}. The default is \code{yellow}.
 #' @inheritParams get_file_path
@@ -29,20 +29,24 @@
 etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
                                     months = 1:12, 
                                     types  = "yellow", transportation = "taxi",...) {
-  message("Extracting raw data...")
+  
   
   #choose transportation type
   #TAXI-----------------------------------------------------------------------
   if (transportation == "taxi") {
-    remote <- get_file_path(years, months, types, path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
-    tryCatch(etl::smart_download(obj, remote$src, ...),
-             error = function(e){warning(e)}, finally = warning("Some of the data you requested are not avaliable on TLC...")
+    message("Extracting raw taxi data...")
+    remote <- get_file_path(years, months, types, 
+                            path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
+    tryCatch(expr = etl::smart_download(obj, remote$src, ...),
+             error = function(e){warning(e)}, 
+             finally = warning("Some of the data you requested are not avaliable on TLC...")
              )
     
     } 
   
   #UBER-----------------------------------------------------------------------
   else if (transportation == "uber") {
+    message("Extracting raw uber data...")
     raw_month_2014 <- etl::valid_year_month(years = 2014, months = 4:9)
     raw_month_2015 <- etl::valid_year_month(years = 2015, months = 1:6)
     raw_month <- bind_rows(raw_month_2014, raw_month_2015)
@@ -77,7 +81,7 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
   
   #LYFT-----------------------------------------------------------------------
   else if (transportation == "lyft") {
-    
+    message("Extracting raw lyft data...")
     #check if the week is valid
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
     
