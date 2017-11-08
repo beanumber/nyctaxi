@@ -19,7 +19,7 @@
 #' 
 #' 
 #' \dontrun{
-#' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
+#' taxi <- etl("nyctaxi", dir = "~/Dropbox/nyctaxi/")
 #' taxi %>% 
 #'    etl_extract(years = 2014, months = 1:12, types = c("green"), transportation = "uber") %>% 
 #'    etl_transform(years = 2015, months = 1, types = c("green")) %>% 

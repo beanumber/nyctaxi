@@ -60,7 +60,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     uber14_list <- list.files(path = attr(obj, "raw_dir"), pattern = "14.csv")
     
     if(file.exists(zipped_uberfileURL)){
-      unzip(zipped_uberfileURL, exdir = file.path(attr(obj, "load_dir"),"uber-raw-data-2015_01-06.csv"))
+      unzip(zipped_uberfileURL, junkpaths = TRUE, exdir = file.path(attr(obj, "load_dir"),"uber-raw-data-2015_01-06.csv"))
     } 
     else if( length(uber14_list) != 0){
       raw_file_path <- data.frame(uber14_list) %>%
@@ -95,7 +95,6 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     warning("The transportation you specified does not exist...")
   }
   
-  #is it caused by invisible obj?
   invisible(obj)
 }
 
