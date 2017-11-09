@@ -22,7 +22,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     remote <- get_file_path(years, months, types, path = attr(obj, "raw_dir")) 
     remote_green <- remote %>% 
       filter_(~type == "green")%>%
-      filter_(~year >= 2016)
+      filter_(~year != 2015)
     
     #create a df of file path of the files that are in the raw directory
     src <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = TRUE)

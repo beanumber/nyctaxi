@@ -19,6 +19,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     message("Loading taxi data from load directory to a sql database...")
     
     #create a list of file that the user wants to load
+    
     remote <- get_file_path(years, months, types, path = attr(obj, "load_dir"))
     
     #create a df of file path of the files that are in the load directory

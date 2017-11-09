@@ -21,9 +21,9 @@
 #' \dontrun{
 #' taxi <- etl("nyctaxi", dir = "~/Dropbox/nyctaxi/")
 #' taxi %>% 
-#'    etl_extract(years = 2015, months = 1:12, types = c("green"), transportation = "uber") %>% 
-#'    etl_transform(years = 2015, months = 1:12, types = c("green"), transportation = "uber") %>% 
-#'    etl_load(years = 2015, months = 1:12, types = c("green"), transportation = "uber") 
+#'    etl_extract(years = 2017, months = 1, types = c("green"), transportation = "taxi") %>% 
+#'    etl_transform(years = 2015, months = 1, types = c("green"), transportation = "taxi") %>% 
+#'    etl_load(years = 2015, months = 1, types = c("green"), transportation = "taxi") 
 #' }
 
 etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
