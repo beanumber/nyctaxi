@@ -21,14 +21,14 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     #create a df of file path of the files that the user wants to transform
     remote <- get_file_path(years, months, types, path = attr(obj, "raw_dir")) 
     remote_green <- remote %>% 
-      filter_(~type == "green")
+      filter_(~type == "green")%>%
+      filter_(~year >= 2016)
     
     #create a df of file path of the files that are in the raw directory
     src <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = TRUE)
     
     #only keep the files thst the user wants to transform
     src_small <- intersect(src, remote$src)
-    
     src_small_green <- intersect(src, remote_green$src)
     
     if (length(src_small) == 0) {
