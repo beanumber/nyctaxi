@@ -21,9 +21,9 @@
 #' \dontrun{
 #' taxi <- etl("nyctaxi", dir = "~/Dropbox/nyctaxi/")
 #' taxi %>% 
-#'    etl_extract(years = 2014, months = 1:12, types = c("green"), transportation = "uber") %>% 
-#'    etl_transform(years = 2015, months = 1, types = c("green")) %>% 
-#'    etl_load(years = 2015, months = 1, types = c("green")) 
+#'    etl_extract(years = 2015, months = 1:12, types = c("green"), transportation = "uber") %>% 
+#'    etl_transform(years = 2015, months = 1:12, types = c("green"), transportation = "uber") %>% 
+#'    etl_load(years = 2015, months = 1:12, types = c("green"), transportation = "uber") 
 #' }
 
 etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
@@ -54,9 +54,15 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     remote <- etl::valid_year_month(years, months)
     remote_small <- intersect(raw_month, remote)
     
-    if (2015 %in% remote_small$year) {
+    if (2015 %in% remote_small$year && !(2014 %in% remote_small$year)){
       #download 2015 data
-      etl::smart_download(obj, "https://github.com/fivethirtyeight/uber-tlc-foil-response/blob/master/uber-trip-data/uber-raw-data-janjune-15.csv.zip")
+      message("Downloading Uber 2015 data...")
+      etl::smart_download(obj, "https://github.com/fivethirtyeight/uber-tlc-foil-response/raw/master/uber-trip-data/uber-raw-data-janjune-15.csv.zip")
+      }
+    else if (2015 %in% remote_small$year && 2014 %in% remote_small$year) {
+      #download 2015 data
+      message("Downloading Uber 2015 data...")
+      etl::smart_download(obj, "https://github.com/fivethirtyeight/uber-tlc-foil-response/raw/master/uber-trip-data/uber-raw-data-janjune-15.csv.zip")
       
       #download 2014 data
       small <- remote_small %>%
@@ -65,8 +71,10 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
                 src = ~file.path(path, paste0("uber-raw-data-",month_abb,
                                               substr(year,3,4),
                                               ".csv")))
+      message("Downloading Uber 2014 data...")
       etl::smart_download(obj, small$src) 
     } else if (2014 %in% remote_small$year && !(2015 %in% remote_small$year)) {
+      message("Downloading Uber 2014 data...")
       #file paths
       small <- remote_small %>%
         mutate_(month_abb = ~tolower(month.abb[month]),
@@ -86,8 +94,9 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
     
     #file path
+    #base url does not work
     base_url = "https://data.cityofnewyork.us/resource/juxc-sutg.csv"
-    etl::smart_download(obj,base_url, ...)
+    #etl::smart_download(obj,base_url, ...)
   } else {
     warning("The transportation you specified does not exist...")
   }

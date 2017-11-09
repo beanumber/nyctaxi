@@ -54,15 +54,34 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   
   #UBER----------------------------------------------------------------
   else if (transportation == "uber") {
-    message("Transforming uber data from raw to load directory...")
-    zipped_uberfileURL <- file.path(attr(obj, "raw_dir"), "uber-raw-data-janjune-15.csv.zip")
     #creat a list of 2014 uber data file directory
     uber14_list <- list.files(path = attr(obj, "raw_dir"), pattern = "14.csv")
+    remote <- etl::valid_year_month(years, months) %>%
+      mutate_(month_abb = ~tolower(month.abb[month]),
+              src = ~file.path(attr(obj, "raw_dir"), paste0("uber-raw-data-",month_abb,
+                                            substr(year,3,4),
+                                            ".csv")))
+    remote_small <- intersect(uber14_list, basename(remote$src))
     
-    if(file.exists(zipped_uberfileURL)){
-      unzip(zipped_uberfileURL, junkpaths = TRUE, exdir = file.path(attr(obj, "load_dir"),"uber-raw-data-2015_01-06.csv"))
-    } 
-    else if( length(uber14_list) != 0){
+    #2015
+    zipped_uberfileURL <- file.path(attr(obj, "raw_dir"), "uber-raw-data-janjune-15.csv.zip")
+    raw_month_2015 <- etl::valid_year_month(years = 2015, months = 1:6)
+    remote_2015 <- etl::valid_year_month(years, months)
+    remote_small_2015 <- inner_join(raw_month_2015, remote_2015)
+      
+    if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0 ){
+      message("Transforming uber 2015 data from raw to load directory...")
+      utils::unzip(zipfile = zipped_uberfileURL, 
+                   unzip = "internal",
+                   exdir = file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv.zip"))
+      file.rename(from = file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"),
+                  to = file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv"))
+    
+      file.remove(file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv.zip","__MACOSX"))
+      #file.remove(file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv.zip"))
+      } 
+    if( length(remote_small) != 0){
+      message("Transforming uber 2014 data from raw to load directory...")
       raw_file_path <- data.frame(uber14_list) %>%
         mutate_(basename = ~attr(obj, "raw_dir")) %>%
         mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
@@ -75,7 +94,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       file.copy(from = raw_file_path$raw_file_dir, to = load_file_path$raw_file_dir)
     }
     else {
-      message("There is no 2015 Uber data in the raw directory...")
+      message("The 2014 Uber data you requested is not in the raw directory...")
     }
   }
   
