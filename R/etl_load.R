@@ -57,7 +57,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0){
       message("Loading uber 2015 data from load directory to a sql database...")
       mapply(DBI::dbWriteTable, 
-             name = "uber", 
+             name = "uber_2015", 
              value = zipped_uberfileURL, 
              MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
     } else if (file.exists(zipped_uberfileURL) && nrow(remote_small_2015) == 0) {
@@ -71,7 +71,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     
     #only keep the files thst the user wants to transform
     remote_small_2014 <- inner_join(src, remote, by = "src") %>%
-      mutate_(table_name = ~"uber")
+      mutate_(table_name = ~"uber_2014")
     
     if(nrow(remote_small_2014) == 0) {
       message("The uber 2014 files you requested are not available in the load directory...")
