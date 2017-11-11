@@ -16,10 +16,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
   
   #TAXI----------------------------------------------------------------
   if (transportation == "taxi") {
-    message("Loading taxi data from load directory to a sql database...")
-    
     #create a list of file that the user wants to load
-    
     remote <- get_file_path(years, months, types, path = attr(obj, "load_dir"))
     
     #create a df of file path of the files that are in the load directory
@@ -32,6 +29,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     if(nrow(src_small) == 0) {
       message("The taxi files you requested are not available in the load directory...")
     } else {
+      message("Loading taxi data from load directory to a sql database...")
       mapply(DBI::dbWriteTable, 
              name = src_small$type, value = src_small$src, 
              MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))

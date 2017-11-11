@@ -94,9 +94,8 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
     
     #file path
-    #base url does not work
     base_url = "https://data.cityofnewyork.us/resource/juxc-sutg.csv"
-    #etl::smart_download(obj,base_url, ...)
+    etl::smart_download(obj,base_url, ...)
   } else {
     warning("The transportation you specified does not exist...")
   }
