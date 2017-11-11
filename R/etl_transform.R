@@ -105,7 +105,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     message("Transforming lyft data from raw to load directory...")
     src <- list.files(attr(obj, "raw_dir"), "lyft", full.names = TRUE)
     src_year <- valid_months %>%
-      distinct_(year)
+      distinct_(~year)
     
     remote <- data_frame(src)
     remote <- remote %>%

@@ -91,7 +91,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
     src <- list.files(attr(obj, "load_dir"), "lyft", full.names = TRUE)
     src_year <- valid_months %>%
-      distinct(year)
+      distinct_(~year)
     remote <- data_frame(src)
     remote <- remote %>%
       mutate_(tablename = ~"lyft",
