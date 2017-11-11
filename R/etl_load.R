@@ -89,13 +89,19 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     
     #create a list of file that the user wants to load
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
+    src <- list.files(attr(obj, "load_dir"), "lyft", full.names = TRUE)
+    src_year <- valid_months %>%
+      distinct(year)
+    remote <- data_frame(src)
+    remote <- remote %>%
+      mutate_(tablename = ~"lyft",
+              year = ~substr(basename(src),6,9))
+    class(remote$year) <- "numeric"
+    remote <- inner_join(remote,src_year, by = "year" )
     
-    #create a df of file path of the files that are in the load directory
-    fileURL <- file.path(attr(obj, "load_dir"), "lyft.csv")
-    
-    if(file.exists(fileURL) && nrow(valid_months) != 0) {
+    if(nrow(remote) != 0) {
       mapply(DBI::dbWriteTable, 
-             name = "lyft", value = fileURL, 
+             name = tablename, value = remote$src, 
              MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
     } else {
       message("The lyft files you requested are not available in the load directory...")

@@ -101,15 +101,26 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   
   #LYFT----------------------------------------------------------------
   else if (transportation == "lyft") {
+    valid_months <- etl::valid_year_month(years, months = 1, begin = "2015-01-01")
     message("Transforming lyft data from raw to load directory...")
-    fileURL <- file.path(attr(obj, "raw_dir"), "juxc-sutg.csv")
-    if(file.exists(fileURL)){
-      file.rename(fileURL, file.path(attr(obj, "load_dir"), "lyft.csv"))
-    } else {
-      message("There is no Lyft data in the raw directory...")
-    }
+    src <- list.files(attr(obj, "raw_dir"), "lyft", full.names = TRUE)
+    src_year <- valid_months %>%
+      distinct_(year)
+    
+    remote <- data_frame(src)
+    remote <- remote %>%
+      mutate_(lcl = ~file.path(attr(obj, "load_dir"),basename(src)),
+              basename = ~basename(src),
+              year = ~substr(basename,6,9))
+    class(remote$year) <- "numeric"
+    remote <- inner_join(remote,src_year, by = "year" )
+    
+    for(i in 1:nrow(remote)) {
+        datafile <- readr::read_csv(remote$src[i])
+        readr::write_delim(datafile, path = remote$lcl[i], delim = "|", na = "")
+    } 
   }
-  
+
   else{
     warning("The transportation you specified does not exist...")
   }

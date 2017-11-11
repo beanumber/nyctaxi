@@ -19,9 +19,9 @@
 #' 
 #' 
 #' \dontrun{
-#' taxi <- etl("nyctaxi", dir = "~/Dropbox/nyctaxi/")
+#' obj <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 #' taxi %>% 
-#'    etl_extract(years = 2017, months = 1, types = c("green"), transportation = "taxi") %>% 
+#'    etl_extract(years = 2015, months = 1, types = c("green"), transportation = "lyft") %>% 
 #'    etl_transform(years = 2015, months = 1, types = c("green"), transportation = "taxi") %>% 
 #'    etl_load(years = 2015, months = 1, types = c("green"), transportation = "taxi") 
 #' }
@@ -92,15 +92,46 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     message("Extracting raw lyft data...")
     #check if the week is valid
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
+    base_url = "https://data.cityofnewyork.us/resource/edp9-qgv4.csv"
+    valid_months <- valid_months %>%
+      mutate_(lcl = ~paste0(attr(obj, "raw_dir"), "/lyft_", valid_months$year, ".csv"))
+    valid_months <- valid_months %>%
+      mutate_(src = ~paste0(base_url,
+                                          "?years=", 
+                                          valid_months$year,
+                                          "&$limit=50000")) %>%
+      mutate_(new_filenames = ~paste0("lyft-", year, ".csv")) %>%
+      mutate_(drop = TRUE)
     
-    #file path
-    base_url = "https://data.cityofnewyork.us/resource/juxc-sutg.csv"
-    etl::smart_download(obj,base_url, ...)
-  } else {
-    warning("The transportation you specified does not exist...")
-  }
-  
+    year <- valid_months[1,1]
+    n <- nrow(valid_months)
+    i <- 2
+    for (i in 2:n) {
+      if(year == valid_months[i-1,1]) {
+        valid_months[i,8] <- FALSE
+        year <- valid_months[i+1,1]
+      } else {
+        valid_months[i,8] <- TRUE
+        year <- valid_months[i+1,1]
+      }
+    }
 
-  invisible(obj)
+    row_to_keep = valid_months$drop
+    valid_months <- valid_months[row_to_keep,]
+    
+    smart_download2 <- function(obj, src, new_filenames = basename(src), type = utils::download.file,  ...) {
+      if (length(src) != length(new_filenames)) {
+        stop("src and new_filenames must be of the same length")
+      }
+      lcl <- file.path(attr(obj, "raw_dir"), new_filenames)
+      missing <- !file.exists(lcl)
+      mapply(type, src[missing], lcl[missing], ... = ...)
+    }
+    
+    smart_download2(obj, src = valid_months$src, new_filenames = basename(valid_months$lcl),
+                      method = "curl", quiet = FALSE)
+  }
+    
+    invisible(obj)
 }
 
