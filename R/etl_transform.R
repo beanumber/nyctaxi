@@ -61,23 +61,47 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
               src = ~file.path(attr(obj, "raw_dir"), paste0("uber-raw-data-",month_abb,
                                             substr(year,3,4),
                                             ".csv")))
-    remote_small <- intersect(uber14_list, basename(remote$src))
+    remote_small_2014 <- intersect(uber14_list, basename(remote$src))
     
     #2015
     zipped_uberfileURL <- file.path(attr(obj, "raw_dir"), "uber-raw-data-janjune-15.csv.zip")
     raw_month_2015 <- etl::valid_year_month(years = 2015, months = 1:6)
     remote_2015 <- etl::valid_year_month(years, months)
     remote_small_2015 <- inner_join(raw_month_2015, remote_2015)
-      
-    if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0 ){
+    
+    #both 2014 and 2015
+    if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0 && length(remote_small_2014) != 0){
       message("Transforming uber 2015 data from raw to load directory...")
       utils::unzip(zipfile = zipped_uberfileURL, 
                    unzip = "internal",
                    exdir = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip"))
       file.rename(from = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"),
                   to = file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv"))
-      } 
-    if( length(remote_small) != 0){
+
+      message("Transforming uber 2014 data from raw to load directory...")
+      raw_file_path <- data.frame(uber14_list) %>%
+        mutate_(basename = ~attr(obj, "raw_dir")) %>%
+        mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
+      
+      load_file_path <- data.frame(uber14_list) %>%
+        mutate_(basename = ~attr(obj, "load_dir")) %>%
+        mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
+      
+      #copy the files in the raw directory and paste them to the load directory
+      file.copy(from = raw_file_path$raw_file_dir, to = load_file_path$raw_file_dir)
+    }
+    #2015 only
+    else if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0 && length(remote_small_2014) == 0){
+      message("Transforming uber 2015 data from raw to load directory...")
+      utils::unzip(zipfile = zipped_uberfileURL, 
+                   unzip = "internal",
+                   exdir = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip"))
+      file.rename(from = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"),
+                  to = file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv"))
+      
+    }
+    #2014 only
+    else if(nrow(remote_small_2015) == 0 && length(remote_small_2014) != 0){
       message("Transforming uber 2014 data from raw to load directory...")
       raw_file_path <- data.frame(uber14_list) %>%
         mutate_(basename = ~attr(obj, "raw_dir")) %>%
