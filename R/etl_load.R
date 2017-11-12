@@ -100,9 +100,11 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     remote <- inner_join(remote,src_year, by = "year" )
     
     if(nrow(remote) != 0) {
-      mapply(DBI::dbWriteTable, 
-             name = tablename, value = remote$src, 
-             MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
+      write_data <- function(...) {
+        lapply(remote$src, FUN = DBI::dbWriteTable, conn = obj$con, 
+               name = "lyft", append = TRUE, sep = "|", ... = ...)
+      }
+      write_data(...)
     } else {
       message("The lyft files you requested are not available in the load directory...")
     }

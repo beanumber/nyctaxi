@@ -19,7 +19,7 @@
 #' 
 #' 
 #' \dontrun{
-#' obj <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
+#' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 #' taxi %>% 
 #'    etl_extract(years = 2014:2017, months = 1:12, types = c("green"), transportation = "lyft") %>% 
 #'    etl_transform(years = 2014:2017, months = 1:12, types = c("green"), transportation = "lyft") %>% 
@@ -118,15 +118,18 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     row_to_keep = valid_months$drop
     valid_months <- valid_months[row_to_keep,]
     
-    smart_download2 <- function(obj, src, new_filenames = basename(src), type = utils::download.file,  ...) {
+    smart_download2 <- function(obj, src, new_filenames = basename(valid_months$src), type = utils::download.file,  ...) {
       if (length(src) != length(new_filenames)) {
         stop("src and new_filenames must be of the same length")
       }
       lcl <- file.path(attr(obj, "raw_dir"), new_filenames)
       missing <- !file.exists(lcl)
-      mapply(type, src[missing], lcl[missing], ... = ...)
+      tryCatch(
+        mapply(type, src[missing], lcl[missing], ... = ...),
+        error = function(e){warning(e)},
+        finally = "The data you requested is already in the raw directory..."
+      )
     }
-    
     smart_download2(obj, src = valid_months$src, new_filenames = basename(valid_months$lcl),
                       method = "curl", quiet = FALSE)
   }
