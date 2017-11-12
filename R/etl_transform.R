@@ -73,7 +73,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       message("Transforming uber 2015 data from raw to load directory...")
       utils::unzip(zipfile = zipped_uberfileURL, 
                    unzip = "internal",
-                   exdir = path.file(tempdir(), "uber-raw-data-janjune-15.csv.zip"))
+                   exdir = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip"))
       file.rename(from = path.file(tempdir(), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"),
                   to = file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv"))
     
