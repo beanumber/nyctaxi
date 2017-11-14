@@ -24,11 +24,9 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     remote <- get_file_path(years, months, types, path = attr(obj, "raw_dir")) 
     #create a df of file path of the files that are in the raw directory
     src <- list.files(attr(obj, "raw_dir"), "tripdata", full.names = TRUE)
-    #only keep the files thst the user wants to transform
     src_small <- intersect(src, remote$src)
-    #find the load directory
-    lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
     
+    #Clean the green taxi data files
     #get rid of 2nd blank row----------------------------------------------------------
     if (length(src_small) == 0) {
       message("The files you requested are not available in the raw directory.")
@@ -66,8 +64,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
                                    ".csv"))
       src_small_green_1 <- intersect(src, remote_green_1$src)
       lcl_green_1 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_1))
-      
-      
+    
       #keep the ones that the user wants to keep
       src_small_green_2 <- intersect(src, remote_green_2$src)
       src_small_green_2 <- data.frame(src_small_green_2) 
@@ -77,7 +74,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       src_small_green_2_df <- inner_join(src_small_green_2, remote_green_2, by = "src")
       src_small_green_2_df <- src_small_green_2_df %>%
         mutate(cmds_2 = paste("cut -d, -f1-", keep," ",src, " > ",attr(obj, "raw_dir"),
-                              "/green_tripdata_", year, "-", stringr::str_pad(month, 2, "left", "0"),".csv",
+                              "/green_tripdata_", year, "_", stringr::str_pad(month, 2, "left", "0"),".csv",
                               sep = ""))
       
       #remove the extra column
@@ -98,8 +95,80 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
         "All the green taxi data you requested are in cleaned formats."
       }
       
+      #Find the files paths of the files that need to be transformed----------------------
+      source_df <- data.frame(src) 
+      source_df <- source_df %>%
+        mutate_(src = ~as.character(src)) %>%
+        mutate_(type = ~substr(basename(src), 1,5),
+                other = ~substr(basename(src), 6,15),
+                year = ~substr(basename(src), 16,19),
+                sep = ~substr(basename(src), 20,20),
+                month = ~substr(basename(src), 21,22),
+                end = ~substr(basename(src), 23,26)
+        )
+      
+      #get rid of the extra files that we do not want to transform
+      source_keep <- source_df %>%
+        filter_( ~sep == "_") %>%
+        mutate_(source_drop = ~file.path(attr(obj, "raw_dir"), paste0(type, other,
+                                                                      year, "-",month, end) ))
+      source_drop <- source_keep$source_drop
+      src_raw <- setdiff(src, source_drop)
+      
+      #GREEN
+      #only keep the files thst the user wants to transform
+      remote_green <- remote %>%
+        mutate_(type = ~substr(basename(src), 1,5),
+                year = ~substr(basename(src), 16,19),
+                month = ~substr(basename(src), 21,22)) %>%
+        filter_(~type == "green")
+      
+      substrRight <- function(x, n){
+        substr(x, nchar(x)-n+1, nchar(x))
+      }
+      
+      
+      src_raw <- data.frame(src_raw) 
+      src_raw_green <- src_raw %>%
+        mutate_(src = ~as.character(src_raw)) %>%
+        mutate_(type = ~substr(basename(src), 1,5),
+                year = ~substr(basename(src), 16,19),
+                month = ~substr(basename(src), 21,22),
+                end = ~substrRight(basename(src),1)) %>%
+        filter_(~type == "green") %>%
+        filter_(~end != "e")
+      
+      src_small_green <- inner_join(src_raw_green, remote_green, by = c("type",
+                                                                        "year",
+                                                                        "month"))
+      
+      #the green ones that need to be transformed
+      src_green <- src_small_green$src.x
+      
+      #yellow
+      remote_yellow <- remote %>%
+        mutate_(type = ~substr(basename(src), 1,5)) %>%
+        filter_(~type != "green")
+      
+      src_raw_yellow <- src_raw %>%
+        mutate_(src = ~as.character(src_raw)) %>%
+        mutate_(type = ~substr(basename(src), 1,5)) %>%
+        filter_(~type != "green")
+      
+      #the yellow ones that need to be transformed
+      src_yellow <- intersect(src_raw_yellow$src, remote_yellow$src)
+      
+      src_all <- c(src_yellow, src_green)
+      
+      #find the load directory
+      
+      lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
+      
+      sort(src_all)
+      sort(lcl)
+      
       #copy the files in the raw directory and paste them to the load directory
-      file.copy(from = src_small, to = lcl)
+      file.copy(from = src_all, to = lcl)
     }
   }
   
