@@ -59,8 +59,8 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       #fix column number---------------------------------------------------------------
       remote_green_2 <- remote %>% 
         filter_(~type == "green") %>%
-        filter_(~year %in% c(2014,2015)) %>%
-        mutate_(keep = ~ifelse(year == 2014, 20,21),
+        filter_(~year %in% c(2013, 2014, 2015)) %>%
+        mutate_(keep = ~ifelse(year %in% c(2013,2014), 20,21),
                 new_file = ~paste0("green_", year, "-", 
                                    stringr::str_pad(month, 2, "left", "0"),
                                    ".csv"))
@@ -77,7 +77,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       src_small_green_2_df <- inner_join(src_small_green_2, remote_green_2, by = "src")
       src_small_green_2_df <- src_small_green_2_df %>%
         mutate(cmds_2 = paste("cut -d, -f1-", keep," ",src, " > ",attr(obj, "raw_dir"),
-                              "/green_tripdata_", year, "_", stringr::str_pad(month, 2, "left", "0"),".csv",
+                              "/green_tripdata_", year, "-", stringr::str_pad(month, 2, "left", "0"),".csv",
                               sep = ""))
       
       #remove the extra column
