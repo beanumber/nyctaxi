@@ -20,11 +20,10 @@ CREATE TABLE `yellow` (
  `tolls_amount` decimal(5,3) DEFAULT NULL,
  `improvement_surcharge` decimal(5,3) DEFAULT NULL,
  `total_amount` decimal(5,3) DEFAULT NULL,
+ KEY `VendorID` (`VendorID`),
  KEY `pickup_datetime` (`tpep_pickup_datetime`),
- KEY `dropoff_datetime` (`tpep_dropoff_datetime`),
- KEY `trip_distance` (`trip_distance`),
- PRIMARY KEY `total_amount` (`total_amount`)
-)
+ KEY `dropoff_datetime` (`tpep_dropoff_datetime`)
+);
 
 
 DROP TABLE IF EXISTS `green`;
@@ -50,8 +49,7 @@ CREATE TABLE `green` (
  `Total_amount` decimal(5,3) DEFAULT NULL,
  `Payment_type` tinyint DEFAULT NULL,
  `Trip_type` tinyint DEFAULT NULL,
+ KEY `VendorID` (`VendorID`),
  KEY `pickup_datetime` (`lpep_pickup_datetime`),
- KEY `dropoff_datetime` (`Lpep_dropoff_datetime`),
- KEY `trip_distance` (`Trip_distance`),
- PRIMARY KEY `total_amount` (`Total_amount`)
-)
+ KEY `dropoff_datetime` (`Lpep_dropoff_datetime`)
+);
