@@ -81,7 +81,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
                               sep = ""))
       
       #remove the extra column
-      if(length(lcl_green_2) != 0) {
+      if(length(src_small_green_2) != 0) {
         
         if (.Platform$OS.type == "unix"){
           lapply(src_small_green_2_df$cmds_2, system)
