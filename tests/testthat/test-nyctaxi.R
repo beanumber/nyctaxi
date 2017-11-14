@@ -25,3 +25,10 @@ test_that("get_file_path works", {
   expect_equal(nrow(get_file_path(2017, 1:6, "yellow", "~/")), 6)
 })
 
+test_that("download_nyc_data works", {
+  taxi <- etl("nyctaxi")
+  num_rows <- sample.int(100, size = 1)
+  lyft <- download_nyc_data(taxi, n = num_rows)
+  expect_equal(nrow(readr::read_csv(lyft)), num_rows)
+})
+
