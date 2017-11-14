@@ -23,7 +23,7 @@ CREATE TABLE `yellow` (
  KEY `pickup_datetime` (`tpep_pickup_datetime`),
  KEY `dropoff_datetime` (`tpep_dropoff_datetime`),
  KEY `trip_distance` (`trip_distance`),
- KEY `total_amount` (`total_amount`)
+ PRIMARY KEY `total_amount` (`total_amount`)
 )
 
 
@@ -53,5 +53,5 @@ CREATE TABLE `green` (
  KEY `pickup_datetime` (`lpep_pickup_datetime`),
  KEY `dropoff_datetime` (`Lpep_dropoff_datetime`),
  KEY `trip_distance` (`Trip_distance`),
- KEY `total_amount` (`Total_amount`)
+ PRIMARY KEY `total_amount` (`Total_amount`)
 )
