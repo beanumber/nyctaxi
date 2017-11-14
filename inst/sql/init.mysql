@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `yellow`;
+DROP TABLE IF EXISTS yellow;
 
 CREATE TABLE `yellow` (
  `VendorID` tinyint DEFAULT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE `yellow` (
 )
 
 
-DROP TABLE IF EXISTS `green`;
+DROP TABLE IF EXISTS green;
 
 CREATE TABLE `green` (
  `VendorID` tinyint DEFAULT NULL,
