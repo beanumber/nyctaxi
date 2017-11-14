@@ -39,13 +39,13 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
         filter_(~type == "green")%>%
         filter_(~year != 2015)
       src_small_green_1 <- intersect(src, remote_green_1$src)
-      lcl_green_1 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_1))
+      #lcl_green_1 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_1))
       
       # check that the sys support command line, and then remove the blank 2nd row
-      if(length(lcl_green_1) != 0) {
+      if(length(src_small_green_1) != 0) {
         
         if (.Platform$OS.type == "unix"){
-          cmds_1 <- paste("sed -i -e '2d'", lcl_green_1)
+          cmds_1 <- paste("sed -i -e '2d'", src_small_green_1)
           lapply(cmds_1, system)
         } else {
           message("Windows system does not currently 
@@ -56,8 +56,6 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       }else {
         "You did not request for any green taxi data, or all the green taxi data you requested are in cleaned formats."
       }
-      
-      
       #fix column number---------------------------------------------------------------
       remote_green_2 <- remote %>% 
         filter_(~type == "green") %>%
@@ -66,18 +64,27 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
                 new_file = ~paste0("green_", year, "-", 
                                    stringr::str_pad(month, 2, "left", "0"),
                                    ".csv"))
+      src_small_green_1 <- intersect(src, remote_green_1$src)
+      lcl_green_1 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_1))
+      
+      
+      #keep the ones that the user wants to keep
       src_small_green_2 <- intersect(src, remote_green_2$src)
-      lcl_green_2 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_2))
+      src_small_green_2 <- data.frame(src_small_green_2) 
+      names(src_small_green_2) <- "src"
+      #keep the ones that are in the raw dir
+      #lcl_green_2 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_2))
+      src_small_green_2_df <- inner_join(src_small_green_2, remote_green_2, by = "src")
+      src_small_green_2_df <- src_small_green_2_df %>%
+        mutate(cmds_2 = paste("cut -d, -f1-", keep," ",src, " > ",attr(obj, "raw_dir"),
+                              "/green_tripdata_", year, "_", stringr::str_pad(month, 2, "left", "0"),".csv",
+                              sep = ""))
+      
       #remove the extra column
       if(length(lcl_green_2) != 0) {
         
         if (.Platform$OS.type == "unix"){
-          cmds_2 <- paste("cut -d, -f1-", remote_green_2$keep," green_tripdata_", 
-                          remote_green_2$year,"-", stringr::str_pad(remote_green_2$month, 2, "left", "0"), 
-                          ".csv > green_tripdata_", remote_green_2$year, 
-                          "-", stringr::str_pad(remote_green_2$month, 2, "left", "0"),
-                          ".csv ", lcl_green_2, sep = "")
-          lapply(cmds_2, system)
+          lapply(src_small_green_2_df$cmds_2, system)
         } 
         else {
           message("Windows system does not currently 
