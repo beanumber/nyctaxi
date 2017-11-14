@@ -18,34 +18,75 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   #TAXI----------------------------------------------------------------
   if (transportation == "taxi") {
     message("Transforming taxi data from raw to load directory...")
+    
+    #fix 2nd blank row
     #create a df of file path of the files that the user wants to transform
     remote <- get_file_path(years, months, types, path = attr(obj, "raw_dir")) 
-    remote_green <- remote %>% 
-      filter_(~type == "green")%>%
-      filter_(~year != 2015)
-    
     #create a df of file path of the files that are in the raw directory
-    src <- list.files(attr(obj, "raw_dir"), "\\.csv", full.names = TRUE)
-    
+    src <- list.files(attr(obj, "raw_dir"), "tripdata", full.names = TRUE)
     #only keep the files thst the user wants to transform
     src_small <- intersect(src, remote$src)
-    src_small_green <- intersect(src, remote_green$src)
+    #find the load directory
+    lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
     
+    #get rid of 2nd blank row----------------------------------------------------------
     if (length(src_small) == 0) {
       message("The files you requested are not available in the raw directory.")
-    } else {
-      #find the load directory
-      lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
-      lcl_green <- file.path(attr(obj, "raw_dir"), basename(src_small_green))
+    } 
+    else {
+      #a list of the ones that have a 2nd blank row
+      remote_green_1 <- remote %>% 
+        filter_(~type == "green")%>%
+        filter_(~year != 2015)
+      src_small_green_1 <- intersect(src, remote_green_1$src)
+      lcl_green_1 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_1))
       
-      # check that the type is green, and then do this
-      if (.Platform$OS.type == "unix"){
-        cmds <- paste("sed -i -e '2d'", lcl_green)
-        lapply(cmds, system)
-      } else {
-        message("Windows system does not currently support this function...")
+      # check that the sys support command line, and then remove the blank 2nd row
+      if(length(lcl_green_1) != 0) {
+        if (.Platform$OS.type == "unix"){
+          cmds_1 <- paste("sed -i -e '2d'", lcl_green_1)
+          lapply(cmds_1, system)
+        } else {
+          message("Windows system does not currently 
+                  support removing the 2nd blank row 
+                  in the green taxi datasets. This might 
+                  affect loading data into SQL...")
+        }
+      }else {
+        "All the green taxi data you requested are in cleaned formats."
       }
       
+      
+      #fix column number---------------------------------------------------------------
+      remote_green_2 <- remote %>% 
+        filter_(~type == "green") %>%
+        filter_(~year %in% c(2014,2015)) %>%
+        mutate_(keep = ~ifelse(year == 2014, 20,21),
+                new_file = ~paste0("green_", year, "-", 
+                                   stringr::str_pad(remote_green_2$month, 2, "left", "0"),
+                                   ".csv"))
+      src_small_green_2 <- intersect(src, remote_green_2$src)
+      lcl_green_2 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_2))
+      #remove the extra column
+      if(length(lcl_green_2) != 0) {
+        if (.Platform$OS.type == "unix"){
+          cmds_2 <- paste("cut -d, -f1-", remote_green_2$keep," green_tripdata_", 
+                          remote_green_2$year,"-", stringr::str_pad(remote_green_2$month, 2, "left", "0"), 
+                          ".csv > green_tripdata_", remote_green_2$year, 
+                          "-", stringr::str_pad(remote_green_2$month, 2, "left", "0"),
+                          ".csv ", lcl_green_2, sep = "")
+          lapply(cmds_2, system)
+        } 
+        else {
+          message("Windows system does not currently 
+                  support removing the 2nd blank row 
+                  in the green taxi datasets. This might 
+                  affect loading data into SQL...")
+        }
+      }
+      else {
+        "All the green taxi data you requested are in cleaned formats."
+      }
       #copy the files in the raw directory and paste them to the load directory
       file.copy(from = src_small, to = lcl)
     }
