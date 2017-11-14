@@ -43,6 +43,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       
       # check that the sys support command line, and then remove the blank 2nd row
       if(length(lcl_green_1) != 0) {
+        
         if (.Platform$OS.type == "unix"){
           cmds_1 <- paste("sed -i -e '2d'", lcl_green_1)
           lapply(cmds_1, system)
@@ -53,7 +54,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
                   affect loading data into SQL...")
         }
       }else {
-        "All the green taxi data you requested are in cleaned formats."
+        "You did not request for any green taxi data, or all the green taxi data you requested are in cleaned formats."
       }
       
       
@@ -63,12 +64,13 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
         filter_(~year %in% c(2014,2015)) %>%
         mutate_(keep = ~ifelse(year == 2014, 20,21),
                 new_file = ~paste0("green_", year, "-", 
-                                   stringr::str_pad(remote_green_2$month, 2, "left", "0"),
+                                   stringr::str_pad(month, 2, "left", "0"),
                                    ".csv"))
       src_small_green_2 <- intersect(src, remote_green_2$src)
       lcl_green_2 <- file.path(attr(obj, "raw_dir"), basename(src_small_green_2))
       #remove the extra column
       if(length(lcl_green_2) != 0) {
+        
         if (.Platform$OS.type == "unix"){
           cmds_2 <- paste("cut -d, -f1-", remote_green_2$keep," green_tripdata_", 
                           remote_green_2$year,"-", stringr::str_pad(remote_green_2$month, 2, "left", "0"), 
@@ -83,10 +85,12 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
                   in the green taxi datasets. This might 
                   affect loading data into SQL...")
         }
+        
       }
       else {
         "All the green taxi data you requested are in cleaned formats."
       }
+      
       #copy the files in the raw directory and paste them to the load directory
       file.copy(from = src_small, to = lcl)
     }
