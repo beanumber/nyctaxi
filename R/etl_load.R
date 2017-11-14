@@ -17,7 +17,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
   #TAXI----------------------------------------------------------------
   if (transportation == "taxi") {
     #create a list of file that the user wants to load
-    remote_ <- get_file_path(years, months, types, path = attr(obj, "load_dir"))
+    remote <- get_file_path(years, months, types, path = attr(obj, "load_dir"))
     
     #create a df of file path of the files that are in the load directory
     src <- list.files(attr(obj, "load_dir"), "tripdata", full.names = TRUE)
