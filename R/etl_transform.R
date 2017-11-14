@@ -164,8 +164,8 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       
       lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
       
-      sort(src_all)
-      sort(lcl)
+      src_all <- sort(src_all)
+      lcl <- sort(lcl)
       
       #copy the files in the raw directory and paste them to the load directory
       file.copy(from = src_all, to = lcl)
