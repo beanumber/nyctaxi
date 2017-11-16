@@ -21,7 +21,7 @@
 #' \dontrun{
 #' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi")
 #' taxi %>% 
-#'    etl_extract(years = 2015, months = 1:12, types = c("green"), transportation = "taxi") %>% 
+#'    etl_extract(years = 2014, months = 4, types = c("green"), transportation = "lyft") %>% 
 #'    etl_transform(years = 2015, months = 1:12, types = c("green"), transportation = "taxi") %>% 
 #'    etl_load(years = 2015, months = 1:12, types = c("green"), transportation = "taxi") 
 #' }
@@ -94,15 +94,15 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
     base_url = "https://data.cityofnewyork.us/resource/edp9-qgv4.csv"
     valid_months <- valid_months %>%
-      mutate_(lcl = ~paste0(attr(obj, "raw_dir"), "/lyft_", valid_months$year, ".csv"))
-    valid_months <- valid_months %>%
+      mutate_(lcl = ~paste0(attr(obj, "raw_dir"), 
+                            "/lyft_", valid_months$year, ".csv"))%>%
       mutate_(src = ~paste0(base_url,
                                           "?years=", 
                                           valid_months$year,
                                           "&$limit=50000")) %>%
       mutate_(new_filenames = ~paste0("lyft-", year, ".csv")) %>%
       mutate_(drop = TRUE)
-    
+    #only keep one data set per year
     year <- valid_months[1,1]
     n <- nrow(valid_months)
     for (i in 2:n) {
@@ -114,26 +114,19 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
         year <- valid_months[i+1,1]
       }
     }
-
     row_to_keep = valid_months$drop
     valid_months <- valid_months[row_to_keep,]
+    #download lyft files
+    first_try<-tryCatch(
+      download_nyc_data(obj, valid_months$year, n = 50000, 
+                        names = valid_months$new_filenames, method = "curl"),
+      error = function(e){warning(e)},finally = 'method = "curl" fails')
     
-    smart_download2 <- function(obj, src, new_filenames = basename(valid_months$src), type = utils::download.file,  ...) {
-      if (length(src) != length(new_filenames)) {
-        stop("src and new_filenames must be of the same length")
-      }
-      lcl <- file.path(attr(obj, "raw_dir"), new_filenames)
-      missing <- !file.exists(lcl)
-      tryCatch(
-        mapply(type, src[missing], lcl[missing], ... = ...),
-        error = function(e){warning(e)},
-        finally = "The data you requested is already in the raw directory..."
-      )
-    }
-    smart_download2(obj, src = valid_months$src, new_filenames = basename(valid_months$lcl),
-                      method = "curl", quiet = FALSE)
+    ifelse(first_try[[1]] == 0, print("Download succeeded."), 
+           tryCatch(download_nyc_data(obj, valid_months$year, n = 50000, 
+                                      names = valid_months$new_filenames, method = "auto"),
+                    error = function(e){warning(e)},finally = 'method = "auto" fails'))
   }
-    
     invisible(obj)
 }
 
