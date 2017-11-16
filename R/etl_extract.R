@@ -21,7 +21,7 @@
 #' \dontrun{
 #' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi")
 #' taxi %>% 
-#'    etl_extract(years = 2014, months = 4, types = c("green"), transportation = "lyft") %>% 
+#'    etl_extract(years = 2014:2016, months = 1, types = c("green"), transportation = "taxi") %>% 
 #'    etl_transform(years = 2015, months = 1:12, types = c("green"), transportation = "taxi") %>% 
 #'    etl_load(years = 2015, months = 1:12, types = c("green"), transportation = "taxi") 
 #' }
@@ -39,7 +39,9 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
                             path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
     tryCatch(expr = etl::smart_download(obj, remote$src, ...),
              error = function(e){warning(e)}, 
-             finally = warning("Some of the data you requested are not avaliable on TLC...")
+             finally = warning("Only the following data are availabel on TLC:
+                               Green taxi data: 2013 Aug - last month
+                               Yellow taxi data: 2009 Jan - last month")
              )
     
     } 

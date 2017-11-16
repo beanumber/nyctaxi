@@ -23,8 +23,8 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     #Clean the green taxi data files
     #get rid of 2nd blank row----------------------------------------------------------
     if (length(src_small) == 0){
-      message("The files you requested are not available in the raw directory.")} 
-    else{
+      message("The files you requested are not available in the raw directory.")
+    } else{
       #a list of the ones that have a 2nd blank row
       remote_green_1 <- remote %>% 
         filter_(~type == "green")%>%
@@ -48,7 +48,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
         filter_(~type == "green") %>%
         filter_(~year %in% c(2013, 2014, 2015)) %>%
         mutate_(keep = ~ifelse(year %in% c(2013,2014), 20,21),
-                new_file = ~paste0("green_", year, "-", 
+                new_file = ~paste0("green_tripdata_", year, "_", 
                                    stringr::str_pad(month, 2, "left", "0"),
                                    ".csv"))
       src_small_green_2 <- intersect(src, remote_green_2$src)
@@ -68,81 +68,20 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
           message("Windows system does not currently support removing the 2nd blank row 
                   in the green taxi datasets. This might affect loading data into SQL...")
         }
-      }
-      else {
+      }else {
         "All the green taxi data you requested are in cleaned formats."
       }
-      
       #Find the files paths of the files that need to be transformed----------------------
-      source_df <- data.frame(src) 
-      source_df <- source_df %>%
-        mutate_(src = ~as.character(src)) %>%
-        mutate_(type = ~substr(basename(src), 1,5),
-                other = ~substr(basename(src), 6,15),
-                year = ~substr(basename(src), 16,19),
-                sep = ~substr(basename(src), 20,20),
-                month = ~substr(basename(src), 21,22),
-                end = ~substr(basename(src), 23,26))
-      #get rid of the extra files that we do not want to transform
-      source_keep <- source_df %>%
-        filter_( ~sep == "_") %>%
-        mutate_(source_drop = ~file.path(attr(obj, "raw_dir"), paste0(type, other,year, "-",month, end)),
-                dest_file = ~file.path(attr(obj, "load_dir"), paste0(type, other,year, "-",month, end)))
-      
-      #move the renamed files
-      file.rename(source_keep$src, source_keep$dest_file)
-      #leave the ones that are not renamed
-      src_raw <- setdiff(src, source_keep$source_drop)
-      src_raw <- setdiff(src, source_drop$src)
-      
-      #GREEN
-      #only keep the files thst the user wants to transform
-      remote_green <- remote %>%
-        mutate_(type = ~substr(basename(src), 1,5),
-                year = ~substr(basename(src), 16,19),
-                month = ~substr(basename(src), 21,22)) %>%
-        filter_(~type == "green")
-      
-      substrRight <- function(x, n){
-        substr(x, nchar(x)-n+1, nchar(x))
-      }
-      src_raw <- data.frame(src_raw) 
-      src_raw_green <- src_raw %>%
-        mutate_(src = ~as.character(src_raw)) %>%
-        mutate_(type = ~substr(basename(src), 1,5),
-                year = ~substr(basename(src), 16,19),
-                month = ~substr(basename(src), 21,22),
-                end = ~substrRight(basename(src),1)) %>%
-        filter_(~type == "green") %>%
-        filter_(~end != "e")
-      src_small_green <- inner_join(src_raw_green, 
-                                    remote_green, by = c("type","year","month"))
-      #the green ones that need to be transformed
-      src_green <- src_small_green$src.x
-      #yellow
-      remote_yellow <- remote %>%
-        mutate_(type = ~substr(basename(src), 1,5)) %>%
-        filter_(~type != "green")
-      
-      src_raw_yellow <- src_raw %>%
-        mutate_(src = ~as.character(src_raw)) %>%
-        mutate_(type = ~substr(basename(src), 1,5)) %>%
-        filter_(~type != "green")
-      
-      #the yellow ones that need to be transformed
-      src_yellow <- intersect(src_raw_yellow$src, remote_yellow$src)
-      
-      src_all <- c(src_yellow, src_green)
-      
-      #find the load directory
-      
-      lcl <- file.path(attr(obj, "load_dir"), basename(src_small))
-      
-      src_all <- sort(src_all)
-      lcl <- sort(lcl)
-      
-      #copy the files in the raw directory and paste them to the load directory
-      file.copy(from = src_all, to = lcl)
+      file.rename(file.path(substr(src_small_green_2_df$src,1,36),
+                            src_small_green_2_df$new_file), 
+                  file.path(attr(obj, "load_dir"), basename(src_small_green_2_df$src)))
+     
+      #Move the files
+      in_raw <- basename(src_small)
+      in_load <- basename(list.files(attr(obj, "load_dir"), "tripdata", full.names = TRUE))
+      file_remian <- setdiff(in_raw,in_load)
+      file.copy(file.path(attr(obj, "raw_dir"),file_remian),
+                file.path(attr(obj, "load_dir"),file_remian) )
     }
   }
   #UBER----------------------------------------------------------------
