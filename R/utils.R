@@ -22,8 +22,8 @@ get_file_path <- function(years, months, types, path) {
                         stringr::str_pad(month, 2, "left", "0"), ".csv")))
 }
 
-download_nyc_data <- function(obj, year, n, names, ...) {
-  url <- paste0("https://data.cityofnewyork.us/resource/edp9-qgv4.csv?years=",
+download_nyc_data <- function(obj, url, year, n, names, ...) {
+  url <- paste0(url,"?years=",
                 year,"&$limit=", n)
   lcl <- file.path(attr(obj, "raw"), names)
   downloader::download(url, destfile = lcl, ...)

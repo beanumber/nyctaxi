@@ -96,12 +96,6 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
     base_url = "https://data.cityofnewyork.us/resource/edp9-qgv4.csv"
     valid_months <- valid_months %>%
-      mutate_(lcl = ~paste0(attr(obj, "raw_dir"), 
-                            "/lyft_", valid_months$year, ".csv"))%>%
-      mutate_(src = ~paste0(base_url,
-                                          "?years=", 
-                                          valid_months$year,
-                                          "&$limit=50000")) %>%
       mutate_(new_filenames = ~paste0("lyft-", year, ".csv")) %>%
       mutate_(drop = TRUE)
     #only keep one data set per year
@@ -119,7 +113,7 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     row_to_keep = valid_months$drop
     valid_months <- valid_months[row_to_keep,]
     #download lyft files, try two different methods
-    download_nyc_data(obj, valid_months$year, n = 50000, 
+    download_nyc_data(obj, base_url, valid_months$year, n = 50000, 
                       names = valid_months$new_filenames)
     # first_try<-tryCatch(
     #   download_nyc_data(obj, valid_months$year, n = 50000, 
