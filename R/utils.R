@@ -26,6 +26,6 @@ download_nyc_data <- function(obj, year, n, names, ...) {
   url <- paste0("https://data.cityofnewyork.us/resource/edp9-qgv4.csv?years=",
                 year,"&$limit=", n)
   lcl <- file.path(attr(obj, "raw"), names)
-  downloader::download(url, destfile = lcl, method = "auto")
+  downloader::download(url, destfile = lcl, ...)
   lcl
 }

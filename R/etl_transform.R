@@ -72,7 +72,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
         "All the green taxi data you requested are in cleaned formats."
       }
       #Find the files paths of the files that need to be transformed----------------------
-      file.rename(file.path(substr(src_small_green_2_df$src,1,36),
+      file.rename(file.path(dirname(src_small_green_2_df$src),
                             src_small_green_2_df$new_file), 
                   file.path(attr(obj, "load_dir"), basename(src_small_green_2_df$src)))
      
