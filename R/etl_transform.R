@@ -116,9 +116,9 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       mutate_(file_path = ~file.path(attr(obj, "raw_dir"), uber14_list))
     uber14file <- lapply(uber14_list$file_path, readr::read_csv)
     n <- length(uber14file)
-    if (n = 1) {
+    if (n == 1) {
       uber14 <- data.frame(uber14file[1])
-    } else if (n = 2) {
+    } else if (n == 2) {
       uber14 <- bind_rows(uber14file[1], uber14file[2])
     } else if (n > 2) {
       uber14 <- bind_rows(uber14file[1], uber14file[2])
@@ -151,11 +151,8 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     names(uber14) <- c("pickup_date", "lat", "lon", "dispatching_base_num")
     names(uber15) <- tolower(names(uber15))
     uber14$pickup_date <- lubridate::as_datetime(uber14$pickup_date)
-    uber <- bind_rows(uber14, uber15)
-    
-    load_file_path <- data.frame(uber14_list) %>%
-      mutate_(basename = ~attr(obj, "load_dir")) %>%
-      mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
+    uber <- bind_rows(uber14_datetime, uber15)
+    write.csv(uber, file.path(attr(obj, "load_dir"),"uber.csv"))
   }
   #LYFT----------------------------------------------------------------
   lyft <- function(obj, years, months){
