@@ -9,15 +9,36 @@
 
 etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
                                     months = 1:12, 
-                                    types  = "yellow", 
-                                    transportation = "taxi",...) {
-  #TAXI----------------------------------------------------------------
-  taxi <- function(obj, years, months, types) {
-    message("Transforming taxi data from raw to load directory...")
+                                    type  = "yellow",...) {
+  #TAXI YELLOW----------------------------------------------------------------
+  taxi_yellow <- function(obj, years, months) {
+    message("Transforming yellow taxi data from raw to load directory...")
     #create a df of file path of the files that the user wants to transform
-    remote <- get_file_path(years, months, types, path = attr(obj, "raw_dir")) 
+    remote <- etl::valid_year_month(years, months, begin = "2009-01-01") %>%
+      mutate_(src = ~file.path(attr(obj, "raw_dir"), 
+                               paste0("yellow", "_tripdata_", year, "-",
+                                      stringr::str_pad(month, 2, "left", "0"), ".csv"))) 
     #create a df of file path of the files that are in the raw directory
-    src <- list.files(attr(obj, "raw_dir"), "tripdata", full.names = TRUE)
+    src <- list.files(attr(obj, "raw_dir"), "yellow", full.names = TRUE)
+    src_small <- intersect(src, remote$src)
+    #Move the files
+    in_raw <- basename(src_small)
+    in_load <- basename(list.files(attr(obj, "load_dir"), "yellow", full.names = TRUE))
+    file_remian <- setdiff(in_raw,in_load)
+    file.copy(file.path(attr(obj, "raw_dir"),file_remian),
+              file.path(attr(obj, "load_dir"),file_remian) )
+  }
+  
+  #TAXI GREEN----------------------------------------------------------------
+  taxi_green <- function(obj, years, months) {
+    message("Transforming green taxi data from raw to load directory...")
+    #create a df of file path of the files that the user wants to transform
+    remote <- etl::valid_year_month(years, months, begin = "2013-08-01") %>%
+      mutate_(src = ~file.path(attr(obj, "raw_dir"), 
+                               paste0("green", "_tripdata_", year, "-",
+                                      stringr::str_pad(month, 2, "left", "0"), ".csv"))) 
+    #create a df of file path of the files that are in the raw directory
+    src <- list.files(attr(obj, "raw_dir"), "green", full.names = TRUE)
     src_small <- intersect(src, remote$src)
     
     #Clean the green taxi data files
@@ -26,8 +47,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       message("The files you requested are not available in the raw directory.")
     } else{
       #a list of the ones that have a 2nd blank row
-      remote_green_1 <- remote %>% 
-        filter_(~type == "green")%>%
+      remote_green_1 <- remote %>%
         filter_(~year != 2015)
       src_small_green_1 <- intersect(src, remote_green_1$src)
       
@@ -40,12 +60,11 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
           message("Windows system does not currently support removing the 2nd blank row 
                   in the green taxi datasets. This might affect loading data into SQL...")
         }
-      }else {
-        "You did not request for any green taxi data, or all the green taxi data you requested are cleaned."
+        }else {
+          "You did not request for any green taxi data, or all the green taxi data you requested are cleaned."
       }
       #fix column number---------------------------------------------------------------
-      remote_green_2 <- remote %>% 
-        filter_(~type == "green") %>%
+      remote_green_2 <- remote %>%
         filter_(~year %in% c(2013, 2014, 2015)) %>%
         mutate_(keep = ~ifelse(year %in% c(2013,2014), 20,21),
                 new_file = ~paste0("green_tripdata_", year, "_", 
@@ -68,22 +87,23 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
           message("Windows system does not currently support removing the 2nd blank row 
                   in the green taxi datasets. This might affect loading data into SQL...")
         }
-      }else {
-        "All the green taxi data you requested are in cleaned formats."
+        }else {
+          "All the green taxi data you requested are in cleaned formats."
       }
       #Find the files paths of the files that need to be transformed----------------------
       file.rename(file.path(dirname(src_small_green_2_df$src),
                             src_small_green_2_df$new_file), 
                   file.path(attr(obj, "load_dir"), basename(src_small_green_2_df$src)))
-     
+      
       #Move the files
       in_raw <- basename(src_small)
-      in_load <- basename(list.files(attr(obj, "load_dir"), "tripdata", full.names = TRUE))
+      in_load <- basename(list.files(attr(obj, "load_dir"), "green", full.names = TRUE))
       file_remian <- setdiff(in_raw,in_load)
       file.copy(file.path(attr(obj, "raw_dir"),file_remian),
                 file.path(attr(obj, "load_dir"),file_remian) )
     }
   }
+  
   #UBER----------------------------------------------------------------
   uber <- function(obj, years, months) {
     #creat a list of 2014 uber data file directory
@@ -169,10 +189,12 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   }
   
   #transform the data from raw to load
-  if (transportation == "taxi"){taxi(obj, years,months,types)} 
-  else if (transportation == "uber"){uber(obj, years,months)}
-  else if (transportation == "lyft"){lyft(obj, years,months)}
-  else {message("The transportation you chose does not exit...")}
+  if (type == "yellow"){taxi_yellow(obj, years, months)} 
+  else if (type == "green"){taxi_green(obj, years, months)}
+  else if (type == "uber"){uber(obj, years, months)}
+  else if (type == "lyft"){lyft(obj, years, months)}
+  else {message("The type you chose does not exit...")}
+  
   invisible(obj)
 }
 

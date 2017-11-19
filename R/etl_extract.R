@@ -8,9 +8,9 @@
 #' @param obj an etl object 
 #' @param years a numeric vector giving the years. The default is the most recent year.
 #' @param months a numeric vector giving the months. The default is January to December.
-#' @param types a character vector giving the type of taxi trip data of \code{yellow}.
-#' @param transportation a character variable of giving the type of data the user wants to download. 
-#' There are three options: taxi, uber, and lyft, and users can only choose one transportation at a time.
+#' @param type a character variable giving the type of data the user wants to download. 
+#' The default is \code{yellow}. There are four options: yellow (meaning yellow taxi data), 
+#' green (meaning green taxi data), uber, and lyft. Users can only choose one transportation at a time.
 #' @param ... arguments passed to \code{\link[etl]{smart_download}}
 #' and/or \code{green}. The default is \code{yellow}.
 #' @inheritParams get_file_path
@@ -21,33 +21,46 @@
 #' \dontrun{
 #' taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi")
 #' taxi %>% 
-#'    etl_extract(years = 2014:2016, months = 1, types = c("green"), transportation = "taxi") %>% 
-#'    etl_transform(years = 2015, months = 1:12, types = c("green"), transportation = "taxi") %>% 
-#'    etl_load(years = 2015, months = 1:12, types = c("green"), transportation = "taxi") 
+#'    etl_extract(years = 2015, months = 1, type = c("lyft")) %>% 
+#'    etl_transform(years = 2015, months = 1, type = c("green")) %>% 
+#'    etl_load(years = 2015, months = 1, type = c("green")) 
 #' }
 
 etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 
                                     months = 1:12, 
-                                    types  = "yellow", transportation = "taxi",...) {
+                                    type  = "yellow",...) {
   
   
   #choose transportation type
-  #TAXI-----------------------------------------------------------------------
-  if (transportation == "taxi") {
-    message("Extracting raw taxi data...")
-    remote <- get_file_path(years, months, types, 
-                            path = "https://s3.amazonaws.com/nyc-tlc/trip+data") 
+  #TAXI YELLOW-----------------------------------------------------------------------
+  taxi_yellow <- function(obj, years, months) {
+    message("Extracting raw yellow taxi data...")
+    remote <- etl::valid_year_month(years, months, begin = "2009-01-01") %>%
+      mutate_(src = ~file.path("https://s3.amazonaws.com/nyc-tlc/trip+data", 
+                               paste0("yellow", "_tripdata_", year, "-",
+                                      stringr::str_pad(month, 2, "left", "0"), ".csv"))) 
     tryCatch(expr = etl::smart_download(obj, remote$src, ...),
              error = function(e){warning(e)}, 
              finally = warning("Only the following data are availabel on TLC:
-                               Green taxi data: 2013 Aug - last month
-                               Yellow taxi data: 2009 Jan - last month")
-             )
+                               Yellow taxi data: 2009 Jan - last month"))
     
-    } 
+  } 
+  #TAXI GREEN-----------------------------------------------------------------------
+  taxi_green <- function(obj, years, months) {
+    message("Extracting raw green taxi data...")
+    remote <- etl::valid_year_month(years, months, begin = "2013-08-01") %>%
+      mutate_(src = ~file.path("https://s3.amazonaws.com/nyc-tlc/trip+data", 
+                               paste0("green", "_tripdata_", year, "-",
+                                      stringr::str_pad(month, 2, "left", "0"), ".csv")))
+    tryCatch(expr = etl::smart_download(obj, remote$src, ...),
+             error = function(e){warning(e)}, 
+             finally = warning("Only the following data are availabel on TLC:
+                               Green taxi data: 2013 Aug - last month"))
+    
+  } 
   
   #UBER-----------------------------------------------------------------------
-  else if (transportation == "uber") {
+  uber <- function(obj, years, months) {
     message("Extracting raw uber data...")
     raw_month_2014 <- etl::valid_year_month(years = 2014, months = 4:9)
     raw_month_2015 <- etl::valid_year_month(years = 2015, months = 1:6)
@@ -90,7 +103,7 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     } 
   
   #LYFT-----------------------------------------------------------------------
-  else if (transportation == "lyft") {
+  lyft <- function(obj, years, months){
     message("Extracting raw lyft data...")
     #check if the week is valid
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
@@ -112,19 +125,25 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     }
     row_to_keep = valid_months$drop
     valid_months <- valid_months[row_to_keep,]
+    
     #download lyft files, try two different methods
-    download_nyc_data(obj, base_url, valid_months$year, n = 50000, 
-                      names = valid_months$new_filenames)
-    # first_try<-tryCatch(
-    #   download_nyc_data(obj, valid_months$year, n = 50000, 
-    #                     names = valid_months$new_filenames, method = "curl"),
-    #   error = function(e){warning(e)},finally = 'method = "curl" fails')
-    # 
-    # ifelse(first_try[[1]] == 0, print("Download succeeded."), 
-    #        tryCatch(download_nyc_data(obj, valid_months$year, n = 50000, 
-    #                                   names = valid_months$new_filenames, method = "auto"),
-    #                 error = function(e){warning(e)},finally = 'method = "auto" fails'))
+    first_try<-tryCatch(
+      download_nyc_data(obj, base_url, valid_months$year, n = 50000,
+                        names = valid_months$new_filenames, method = "libcurl"),
+      error = function(e){warning(e)},finally = 'method = "libcurl" fails')
+
+    ifelse(first_try[[1]] == 0, print("Download succeeded."),
+           tryCatch(download_nyc_data(obj, base_url, valid_months$year, n = 50000,
+                                      names = valid_months$new_filenames, method = "auto"),
+                    error = function(e){warning(e)},finally = 'method = "auto" fails'))
   }
-    invisible(obj)
+  
+  if (type == "yellow"){taxi_yellow(obj, years, months)} 
+  else if (type == "green"){taxi_green(obj, years, months)}
+  else if (type == "uber"){uber(obj, years, months)}
+  else if (type == "lyft"){lyft(obj, years, months)}
+  else {message("The type you chose does not exit...")}
+  
+  invisible(obj)
 }
 
