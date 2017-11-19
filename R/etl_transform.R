@@ -1,5 +1,7 @@
 #' @import etl
 #' @importFrom rlang .data
+#' @importFrom readr read_csv
+#' @importFrom lubridate as_datetime
 #' @export
 #' @rdname etl_extract.etl_nyctaxi
 #' @details transform NYC Yellow taxi trip data from raw directory to load directory
@@ -106,66 +108,54 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   
   #UBER----------------------------------------------------------------
   uber <- function(obj, years, months) {
+    message("Transforming uber data from raw to load directory...")
     #creat a list of 2014 uber data file directory
     uber14_list <- list.files(path = attr(obj, "raw_dir"), pattern = "14.csv")
-    remote <- etl::valid_year_month(years, months) %>%
-      mutate_(month_abb = ~tolower(month.abb[month]),
-              src = ~file.path(attr(obj, "raw_dir"), paste0("uber-raw-data-",month_abb,
-                                            substr(year,3,4),
-                                            ".csv")))
-    remote_small_2014 <- intersect(uber14_list, basename(remote$src))
-    
+    uber14_list <- data.frame(uber14_list)
+    uber14_list <- uber14_list %>%
+      mutate_(file_path = ~file.path(attr(obj, "raw_dir"), uber14_list))
+    uber14file <- lapply(uber14_list$file_path, readr::read_csv)
+    n <- length(uber14file)
+    if (n = 1) {
+      uber14 <- data.frame(uber14file[1])
+    } else if (n = 2) {
+      uber14 <- bind_rows(uber14file[1], uber14file[2])
+    } else if (n > 2) {
+      uber14 <- bind_rows(uber14file[1], uber14file[2])
+      for (i in 3:n){uber14 <- bind_rows(uber14, uber14file[i])}
+    }
+    substrRight <- function(x, n){
+      substr(x, nchar(x)-n+1, nchar(x))
+    }
+    uber14_datetime <- uber14 %>%
+      mutate(date = gsub( " .*$", "", `Date/Time`),
+             len_date = nchar(date),
+             time = sub('.*\\ ', '', `Date/Time`))
+    uber14_datetime <- uber14_datetime %>%
+      mutate(month = substr(`Date/Time`, 1, 1),
+             day = ifelse(len == 8, substr(`Date/Time`, 3,3),substr(`Date/Time`, 3,4)),
+             date_time = ymd_hms(paste0("2014-", month, "-", day, " ", time)))
+
     #2015
     zipped_uberfileURL <- file.path(attr(obj, "raw_dir"), "uber-raw-data-janjune-15.csv.zip")
     raw_month_2015 <- etl::valid_year_month(years = 2015, months = 1:6)
     remote_2015 <- etl::valid_year_month(years, months)
     remote_small_2015 <- inner_join(raw_month_2015, remote_2015)
     
-    #both 2014 and 2015
-    if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0 && length(remote_small_2014) != 0){
-      message("Transforming uber 2015 data from raw to load directory...")
+    if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0){
       utils::unzip(zipfile = zipped_uberfileURL, 
                    unzip = "internal",
                    exdir = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip"))
-      file.rename(from = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"),
-                  to = file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv"))
-
-      message("Transforming uber 2014 data from raw to load directory...")
-      raw_file_path <- data.frame(uber14_list) %>%
-        mutate_(basename = ~attr(obj, "raw_dir")) %>%
-        mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
-      
-      load_file_path <- data.frame(uber14_list) %>%
-        mutate_(basename = ~attr(obj, "load_dir")) %>%
-        mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
-      
-      #copy the files in the raw directory and paste them to the load directory
-      file.copy(from = raw_file_path$raw_file_dir, to = load_file_path$raw_file_dir)
+      uber15 <- readr::read_csv(file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"))
     }
-    #2015 only
-    else if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0 && length(remote_small_2014) == 0){
-      message("Transforming uber 2015 data from raw to load directory...")
-      utils::unzip(zipfile = zipped_uberfileURL, 
-                   unzip = "internal",
-                   exdir = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip"))
-      file.rename(from = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"),
-                  to = file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv"))
-      
-    }
-    #2014 only
-    else if(nrow(remote_small_2015) == 0 && length(remote_small_2014) != 0){
-      message("Transforming uber 2014 data from raw to load directory...")
-      raw_file_path <- data.frame(uber14_list) %>%
-        mutate_(basename = ~attr(obj, "raw_dir")) %>%
-        mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
-      
-      load_file_path <- data.frame(uber14_list) %>%
-        mutate_(basename = ~attr(obj, "load_dir")) %>%
-        mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
-      
-      #copy the files in the raw directory and paste them to the load directory
-      file.copy(from = raw_file_path$raw_file_dir, to = load_file_path$raw_file_dir)
-    }
+    names(uber14) <- c("pickup_date", "lat", "lon", "dispatching_base_num")
+    names(uber15) <- tolower(names(uber15))
+    uber14$pickup_date <- lubridate::as_datetime(uber14$pickup_date)
+    uber <- bind_rows(uber14, uber15)
+    
+    load_file_path <- data.frame(uber14_list) %>%
+      mutate_(basename = ~attr(obj, "load_dir")) %>%
+      mutate_(raw_file_dir = ~paste0(basename, "/",uber14_list))
   }
   #LYFT----------------------------------------------------------------
   lyft <- function(obj, years, months){
