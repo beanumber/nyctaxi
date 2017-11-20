@@ -112,8 +112,10 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
              time = sub('.*\\ ', '', `Date/Time`))
     uber14_datetime <- uber14_datetime %>%
       mutate(month = substr(`Date/Time`, 1, 1),
-             day = ifelse(len == 8, substr(`Date/Time`, 3,3),substr(`Date/Time`, 3,4)),
-             date_time = ymd_hms(paste0("2014-", month, "-", day, " ", time)))
+             day = ifelse(len_date == 8, substr(`Date/Time`, 3,3),substr(`Date/Time`, 3,4)),
+             pickup_date = lubridate::ymd_hms(paste0("2014-", month, "-", day, " ", time)))
+    uber14_df <- uber14_datetime[-c(1,5:9)]
+    
     #2015
     zipped_uberfileURL <- file.path(attr(obj, "raw_dir"), "uber-raw-data-janjune-15.csv.zip")
     raw_month_2015 <- etl::valid_year_month(years = 2015, months = 1:6)
@@ -124,10 +126,10 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
                    unzip = "internal",
                    exdir = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip"))
       uber15 <- readr::read_csv(file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"))}
-    names(uber14) <- c("pickup_date", "lat", "lon", "dispatching_base_num")
+    
+    names(uber14_df) <- c("lat", "lon", "dispatching_base_num", "pickup_date")
     names(uber15) <- tolower(names(uber15))
-    uber14$pickup_date <- lubridate::as_datetime(uber14$pickup_date)
-    uber <- bind_rows(uber14_datetime, uber15)
+    uber <- bind_rows(uber14_df, uber15)
     write.csv(uber, file.path(attr(obj, "load_dir"),"uber.csv"))}
   #LYFT----------------------------------------------------------------
   lyft <- function(obj, years, months){
