@@ -78,11 +78,12 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     } else {
       message("The lyft files you requested are not available in the load directory...")}}
   
-  if (type == "yellow"){taxi_yellow(obj, years, months,...)} 
-  else if (type == "green"){taxi_green(obj, years, months,...)}
-  else if (type == "uber"){uber(obj,...)}
-  else if (type == "lyft"){lyft(obj, years, months,...)}
-  else {message("The type you chose does not exit...")}
+  if (type == "yellow"){taxi_yellow(obj, years, months,...)
+  }else if (type == "green"){taxi_green(obj, years, months,...)
+  }else if (type == "uber"){uber(obj,...)
+  }else if (type == "lyft"){lyft(obj, years, months,...)
+  }else {message("The type you chose does not exit...")
+            }
   
   invisible(obj)
 }
