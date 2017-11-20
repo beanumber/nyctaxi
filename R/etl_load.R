@@ -13,7 +13,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
                                  months = 1:12, 
                                  type  = "yellow", ...) {
   #TAXI YELLOW----------------------------------------------------------------
-  taxi_yellow <- function(obj, years, months) {
+  taxi_yellow <- function(obj, years, months,...) {
     #create a list of file that the user wants to load
     remote <- etl::valid_year_month(years, months, begin = "2009-01-01") %>%
       mutate_(src = ~file.path(attr(obj, "load_dir"), 
@@ -32,7 +32,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
              name = src_small$type, value = src_small$src, 
              MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))}}
   #TAXI GREEN----------------------------------------------------------------
-  taxi_green <- function(obj, years, months) {
+  taxi_green <- function(obj, years, months,...) {
     #create a list of file that the user wants to load
     remote <- etl::valid_year_month(years, months, begin = "2013-08-01") %>%
       mutate_(src = ~file.path(attr(obj, "load_dir"), 
@@ -51,17 +51,16 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
              name = src_small$type, value = src_small$src, 
              MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))}}
   #UBER----------------------------------------------------------------
-  uber <- function(obj) {
+  uber <- function(obj,...) {
     uberfileURL <- file.path(attr(obj, "load_dir"), "uber.csv")
     if(file.exists(uberfileURL)) {
       message("Loading uber data from load directory to a sql database...")
-      mapply(DBI::dbWriteTable, name = remote_small_2014$table_name, 
-             value = remote_small_2014$src, 
-             MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
+      DBI::dbWriteTable(conn = obj$con, name = "uber", 
+                        value = uberfileURL, append = TRUE, ... = ...)
     } else {
       message("There is no uber data in the load directory...")}}
   #LYFT----------------------------------------------------------------
-  lyft <- function(obj, years, months){
+  lyft <- function(obj, years, months,...){
     message("Loading lyft data from load directory to a sql database...")
     #create a list of file that the user wants to load
     valid_months <- etl::valid_year_month(years, months, begin = "2015-01-01")
@@ -79,10 +78,11 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     } else {
       message("The lyft files you requested are not available in the load directory...")}}
   
-  if (type == "yellow"){taxi_yellow(obj, years, months)} 
-  else if (type == "green"){taxi_green(obj, years, months)}
-  else if (type == "uber"){uber(obj)}
-  else if (type == "lyft"){lyft(obj, years, months)}
+  if (type == "yellow"){taxi_yellow(obj, years, months,...)} 
+  else if (type == "green"){taxi_green(obj, years, months,...)}
+  else if (type == "uber"){uber(obj,...)}
+  else if (type == "lyft"){lyft(obj, years, months,...)}
   else {message("The type you chose does not exit...")}
+  
   invisible(obj)
 }
