@@ -79,7 +79,7 @@ CREATE TABLE `uber` (
  `lon` double(7,5) DEFAULT NULL,
  `dispatching_base_num` varchar(15) COLLATE latin1_general_ci DEFAULT NUL,
  `pickup_date` DATETIME NOT NULL,
- `affiliated_base_num` varchar(15) COLLATE latin1_general_ci DEFAULT NULL,
+ `affiliated_base_num` varchar(10) COLLATE latin1_general_ci DEFAULT NULL,
  `locationid` tinyint DEFAULT NULL,
  KEY `pickup_date` (`pickup_date`),
  KEY `locationid` (`locationid`),
