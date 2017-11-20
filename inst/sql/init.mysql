@@ -54,6 +54,7 @@ CREATE TABLE `green` (
  KEY `dropoff_datetime` (`Lpep_dropoff_datetime`)
 );
 
+
 DROP TABLE IF EXISTS `lyft`;
 
 CREATE TABLE `lyft` (
@@ -72,6 +73,7 @@ CREATE TABLE `lyft` (
  KEY `pickup_start_date` (`pickup_start_date`)
 );
 
+
 DROP TABLE IF EXISTS `uber`;
 
 CREATE TABLE `uber` (
@@ -82,5 +84,5 @@ CREATE TABLE `uber` (
  `affiliated_base_num` varchar(15) COLLATE latin1_general_ci DEFAULT NULL,
  `locationid` tinyint DEFAULT NULL,
  KEY `pickup_date` (`pickup_date`),
- KEY `locationid` (`locationid`),
+ KEY `locationid` (`locationid`)
 );
