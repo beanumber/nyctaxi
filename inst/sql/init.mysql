@@ -53,3 +53,34 @@ CREATE TABLE `green` (
  KEY `pickup_datetime` (`lpep_pickup_datetime`),
  KEY `dropoff_datetime` (`Lpep_dropoff_datetime`)
 );
+
+DROP TABLE IF EXISTS `lyft`;
+
+CREATE TABLE `lyft` (
+ `base_license_number` varchar(15) COLLATE latin1_general_ci DEFAULT NULL,
+ `base_name` varchar(40) COLLATE latin1_general_ci DEFAULT NULL,
+ `dba` varchar(40) COLLATE latin1_general_ci DEFAULT NULL,
+ `pickup_end_date` DATE NOT NULL,
+ `pickup_start_date` DATE NOT NULL,
+ `total_dispatched_trips` smallint DEFAULT NULL,
+ `unique_dispatched_vehicle` smallint DEFAULT NULL,
+ `wave_number` tinyint DEFAULT NULL,
+ `week_number` tinyint DEFAULT NULL,
+ `years` smallint DEFAULT NULL,
+ KEY `base_name` (`base_name`),
+ KEY `pickup_end_date` (`pickup_end_date`),
+ KEY `pickup_start_date` (`pickup_start_date`)
+);
+
+DROP TABLE IF EXISTS `uber`;
+
+CREATE TABLE `uber` (
+ `lat` double(7,5) DEFAULT NULL,
+ `lon` double(7,5) DEFAULT NULL,
+ `dispatching_base_num` varchar(15) COLLATE latin1_general_ci DEFAULT NUL,
+ `pickup_date` DATETIME NOT NULL,
+ `affiliated_base_num` varchar(15) COLLATE latin1_general_ci DEFAULT NULL,
+ `locationid` tinyint DEFAULT NULL,
+ KEY `pickup_date` (`pickup_date`),
+ KEY `locationid` (`locationid`),
+);
