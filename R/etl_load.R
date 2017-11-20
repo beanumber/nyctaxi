@@ -51,38 +51,15 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
              name = src_small$type, value = src_small$src, 
              MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))}}
   #UBER----------------------------------------------------------------
-  uber <- function(obj, years, months) {
-    #create a list of file that the user wants to load
-    remote <- etl::valid_year_month(years, months) %>%
-      mutate_(src = ~file.path(attr(obj, "load_dir"),paste0("uber-raw-data-", tolower(month.abb[month]), 
-                                                            substr(year,3,4), ".csv")),
-              year_month = ~paste0(year, "-", month))
-    #2015
-    zipped_uberfileURL <- file.path(attr(obj, "load_dir"), "uber-raw-data-janjune-15.csv")
-    raw_month_2015 <- etl::valid_year_month(years = 2015, months = 1:6) %>%
-      mutate_(year_month = ~paste0(year, "-", month))
-    #only keep the files thst the user wants to transform
-    remote_small_2015 <- inner_join(raw_month_2015, remote, by = "month_begin")
-    if(file.exists(zipped_uberfileURL) && nrow(remote_small_2015) != 0){
-      message("Loading uber 2015 data from load directory to a sql database...")
-      mapply(DBI::dbWriteTable, name = "uber_2015", value = zipped_uberfileURL, 
-             MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
-    } else if (file.exists(zipped_uberfileURL) && nrow(remote_small_2015) == 0) {
-      message("The 2015 uber data you requested are not available in load directory...")}
-    #2014
-    #create a list of file paths of the files that are in the load directory
-    src <- list.files(attr(obj, "load_dir"), "uber", full.names = TRUE)
-    src <- data.frame(src)
-    #only keep the files thst the user wants to transform
-    remote_small_2014 <- inner_join(src, remote, by = "src") %>% mutate_(table_name = ~"uber_2014")
-    if(nrow(remote_small_2014) == 0) {
-      message("The uber 2014 files you requested are not available in the load directory...")
-    } else {
-      message("Loading uber 2014 data from load directory to a sql database...")
-      mapply(DBI::dbWriteTable, 
-             name = remote_small_2014$table_name, 
+  uber <- function(obj) {
+    uberfileURL <- file.path(attr(obj, "load_dir"), "uber.csv")
+    if(file.exists(uberfileURL)) {
+      message("Loading uber data from load directory to a sql database...")
+      mapply(DBI::dbWriteTable, name = remote_small_2014$table_name, 
              value = remote_small_2014$src, 
-             MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))}}
+             MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))
+    } else {
+      message("There is no uber data in the load directory...")}}
   #LYFT----------------------------------------------------------------
   lyft <- function(obj, years, months){
     message("Loading lyft data from load directory to a sql database...")
@@ -104,7 +81,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
   
   if (type == "yellow"){taxi_yellow(obj, years, months)} 
   else if (type == "green"){taxi_green(obj, years, months)}
-  else if (type == "uber"){uber(obj, years, months)}
+  else if (type == "uber"){uber(obj)}
   else if (type == "lyft"){lyft(obj, years, months)}
   else {message("The type you chose does not exit...")}
   invisible(obj)
