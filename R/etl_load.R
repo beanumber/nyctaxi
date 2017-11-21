@@ -20,7 +20,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
                                paste0("yellow", "_tripdata_", year, "-",
                                       stringr::str_pad(month, 2, "left", "0"), ".csv"))) 
     #create a df of file path of the files that are in the load directory
-    src <- list.files(attr(obj, "load_dir"), "tripdata", full.names = TRUE)
+    src <- list.files(attr(obj, "load_dir"), "yellow", full.names = TRUE)
     src <- data.frame(src)
     #only keep the files thst the user wants to transform
     src_small <- inner_join(remote, src, by = "src")
@@ -29,8 +29,8 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     } else {
       message("Loading taxi data from load directory to a sql database...")
       mapply(DBI::dbWriteTable, 
-             name = src_small$type, value = src_small$src, 
-             MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))}}
+             name = "yellow", value = src_small$src, 
+             MoreArgs = list(conn = obj$con, append = TRUE))}}
   #TAXI GREEN----------------------------------------------------------------
   taxi_green <- function(obj, years, months,...) {
     #create a list of file that the user wants to load
@@ -48,7 +48,7 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
     } else {
       message("Loading taxi data from load directory to a sql database...")
       mapply(DBI::dbWriteTable, 
-             name = src_small$type, value = src_small$src, 
+             name = "green", value = src_small$src, 
              MoreArgs = list(conn = obj$con, append = TRUE, ... = ...))}}
   #UBER----------------------------------------------------------------
   uber <- function(obj,...) {
