@@ -130,6 +130,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     names(uber14_df) <- c("lat", "lon", "dispatching_base_num", "pickup_date")
     names(uber15) <- tolower(names(uber15))
     uber <- bind_rows(uber14_df, uber15)
+    uber <- uber[-c(1)]
     write.csv(uber, file.path(attr(obj, "load_dir"),"uber.csv"))}
   #LYFT----------------------------------------------------------------
   lyft <- function(obj, years, months){
