@@ -130,10 +130,17 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     names(uber14_df) <- c("lat", "lon", "dispatching_base_num", "pickup_date")
     names(uber15) <- tolower(names(uber15))
     uber <- bind_rows(uber14_df, uber15)
-    keeps <- c("lat", "lon", "dispatching_base_num","pickup_date",
-               "affiliated_base_num","locationid")
-    uber[keeps]
-    write.csv(uber, file.path(attr(obj, "load_dir"),"uber.csv"))}
+    write.csv(uber, file.path(tempdir() ,"uber.csv"))
+    if(nrow(uber) != 0) {
+      if (.Platform$OS.type == "unix"){
+        cmds_3 <- paste("cut -d, -f2-7 ",file.path(tempdir(),"uber.csv"), " > ", file.path(attr(obj, "load_dir"),"uber.csv"))
+        lapply(cmds_3, system)
+      } else {
+        message("Windows system does not currently support removing the 2nd blank row 
+                in the green taxi datasets. This might affect loading data into SQL...")}
+      }else {
+        "You did not request for any green taxi data, or all the green taxi data you requested are cleaned."}
+    }
   #LYFT----------------------------------------------------------------
   lyft <- function(obj, years, months){
     valid_months <- etl::valid_year_month(years, months = 1, begin = "2015-01-01")
