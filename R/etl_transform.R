@@ -90,7 +90,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       file_remian <- setdiff(in_raw,in_load)
       file.copy(file.path(attr(obj, "raw_dir"),file_remian), file.path(attr(obj, "load_dir"),file_remian) )}}
   #UBER----------------------------------------------------------------
-  uber <- function(obj, years, months) {
+  uber <- function(obj) {
     message("Transforming uber data from raw to load directory...")
     #creat a list of 2014 uber data file directory
     uber14_list <- list.files(path = attr(obj, "raw_dir"), pattern = "14.csv")
@@ -153,7 +153,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
   #transform the data from raw to load
   if (type == "yellow"){taxi_yellow(obj, years, months)} 
   else if (type == "green"){taxi_green(obj, years, months)}
-  else if (type == "uber"){uber(obj, years, months)}
+  else if (type == "uber"){uber(obj)}
   else if (type == "lyft"){lyft(obj, years, months)}
   else {message("The type you chose does not exit...")}
   
