@@ -98,11 +98,12 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     n <- nrow(valid_months)
     for (i in 2:n) {
       if(year == valid_months[i-1,1]) {
-        valid_months[i,8] <- FALSE
+        valid_months[i,6] <- FALSE
         year <- valid_months[i+1,1]
       } else {
-        valid_months[i,8] <- TRUE
-        year <- valid_months[i+1,1]}}
+        valid_months[i,6] <- TRUE
+        year <- valid_months[i+1,1]}
+      }
     row_to_keep = valid_months$drop
     valid_months <- valid_months[row_to_keep,]
     #download lyft files, try two different methods
