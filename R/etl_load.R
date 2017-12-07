@@ -14,23 +14,41 @@ etl_load.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')
                                  type  = "yellow", ...) {
   #TAXI YELLOW----------------------------------------------------------------
   taxi_yellow <- function(obj, years, months,...) {
-    #create a list of file that the user wants to load
-    remote <- etl::valid_year_month(years, months, begin = "2009-01-01") %>%
-      mutate_(src = ~file.path(attr(obj, "load_dir"), 
-                               paste0("yellow", "_tripdata_", year, "-",
-                                      stringr::str_pad(month, 2, "left", "0"), ".csv"))) 
     #create a df of file path of the files that are in the load directory
     src <- list.files(attr(obj, "load_dir"), "yellow", full.names = TRUE)
     src <- data.frame(src)
-    #only keep the files thst the user wants to transform
-    src_small <- inner_join(remote, src, by = "src")
-    if(nrow(src_small) == 0) {
-      message("The taxi files you requested are not available in the load directory...")
+    
+    #files before 2016-07
+    remote_old <- etl::valid_year_month(years, months, begin = "2009-01-01", end = "2016-06-30") %>%
+      mutate_(src = ~file.path(attr(obj, "load_dir"), 
+                               paste0("yellow", "_tripdata_", year, "-",
+                                      stringr::str_pad(month, 2, "left", "0"), ".csv"))) 
+    src_small_old <- inner_join(remote_old, src, by = "src")
+    #files later then 2017-06
+    remote_new <- etl::valid_year_month(years, months, begin = "2016-07-01") %>%
+      mutate_(src = ~file.path(attr(obj, "load_dir"), 
+                               paste0("yellow", "_tripdata_", year, "-",
+                                      stringr::str_pad(month, 2, "left", "0"), ".csv"))) 
+    src_small_new <- inner_join(remote_new, src, by = "src")
+    #data earlier than 2016-07
+    if(nrow(src_small_old) == 0) {
+      message("The taxi files (earlier than 2016-07) you requested are not available in the load directory...")
     } else {
       message("Loading taxi data from load directory to a sql database...")
       mapply(DBI::dbWriteTable, 
-             name = "yellow", value = src_small$src, 
-             MoreArgs = list(conn = obj$con, append = TRUE))}}
+             name = "yellow_old", value = src_small_old$src, 
+             MoreArgs = list(conn = obj$con, append = TRUE))}
+    
+    #data later then 2016-06
+    if(nrow(src_small_new) == 0) {
+      message("The new taxi files (later than 2016-06) you requested are not available in the load directory...")
+    } else {
+      message("Loading taxi data from load directory to a sql database...")
+      mapply(DBI::dbWriteTable, 
+             name = "yellow", value = src_small_new$src, 
+             MoreArgs = list(conn = obj$con, append = TRUE))}
+    
+    }
   #TAXI GREEN----------------------------------------------------------------
   taxi_green <- function(obj, years, months,...) {
     #create a list of file that the user wants to load
