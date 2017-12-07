@@ -125,7 +125,3 @@ CREATE TABLE `uber` (
  KEY `pickup_date` (`pickup_date`),
  KEY `locationid` (`locationid`)
 );
-
-CREATE VIEW yellow_old_sum AS SELECT YEAR(tpep_pickup_datetime) as the_year, MONTH(tpep_pickup_datetime) AS the_month, count(*) AS num_trips
-  FROM yellow_old
-  GROUP BY the_year, the_month;
