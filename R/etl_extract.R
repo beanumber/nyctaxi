@@ -98,22 +98,20 @@ etl_extract.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%
     n <- nrow(valid_months)
     for (i in 2:n) {
       if(year == valid_months[i-1,1]) {
-        valid_months[i,8] <- FALSE
+        valid_months[i,6] <- FALSE
         year <- valid_months[i+1,1]
       } else {
-        valid_months[i,8] <- TRUE
-        year <- valid_months[i+1,1]}}
+        valid_months[i,6] <- TRUE
+        year <- valid_months[i+1,1]}
+      }
     row_to_keep = valid_months$drop
     valid_months <- valid_months[row_to_keep,]
+    
     #download lyft files, try two different methods
     first_try<-tryCatch(
       download_nyc_data(obj, base_url, valid_months$year, n = 50000,
-                        names = valid_months$new_filenames, method = "libcurl",...),
+                        names = valid_months$new_filenames),
       error = function(e){warning(e)},finally = 'method = "libcurl" fails')
-    ifelse(first_try[[1]] == 0, print("Download succeeded."),
-           tryCatch(download_nyc_data(obj, base_url, valid_months$year, n = 50000,
-                                      names = valid_months$new_filenames, method = "auto",...),
-                    error = function(e){warning(e)},finally = 'method = "auto" fails'))
   }
   
   if (type == "yellow"){taxi_yellow(obj, years, months,...)} 
