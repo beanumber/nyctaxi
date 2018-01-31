@@ -127,7 +127,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
                    exdir = file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip"))
       uber15 <- readr::read_csv(file.path(tempdir(), "uber-raw-data-janjune-15.csv.zip","uber-raw-data-janjune-15.csv"))}
     
-    names(uber14_df) <- c("lat", "lon", "dispatching_base_num", "pickup_date")
+    names(uber14_df) <- c("lat", "lon", "affiliated_base_num", "pickup_date")
     names(uber15) <- tolower(names(uber15))
     uber <- bind_rows(uber14_df, uber15)
     write.csv(uber, file.path(tempdir() ,"uber.csv"))

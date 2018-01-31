@@ -3,16 +3,18 @@
 #' @import etl
 #' @importFrom stringr str_pad
 #' @export 
-#' @details extract NYC Yellow taxi trip data from Jan 2009 and 
-#' Green taxi trip data from Aug 2013 data from NYC Taxi & Limousine Commission 
+#' @details extract NYC Yellow taxi trip data from Jan 2009 to the most recent month,
+#' Green taxi trip data from Aug 2013 to the most recent month data from NYC Taxi & Limousine Commission, 
+#' Uber trip data from April to September 2014 and January to June 2015,
+#' Lyft weekly-aggregated data from 2015 to the most recent week.
 #' @param obj an etl object 
 #' @param years a numeric vector giving the years. The default is the most recent year.
 #' @param months a numeric vector giving the months. The default is January to December.
 #' @param type a character variable giving the type of data the user wants to download. 
-#' The default is \code{yellow}. There are four options: yellow (meaning yellow taxi data), 
+#' There are four options: yellow (meaning yellow taxi data), 
 #' green (meaning green taxi data), uber, and lyft. Users can only choose one transportation at a time.
+#' The default is \code{yellow}.
 #' @param ... arguments passed to \code{\link[etl]{smart_download}}
-#' and/or \code{green}. The default is \code{yellow}.
 #' @inheritParams get_file_path
 #' @seealso \code{\link[etl]{etl_extract}}
 #' @examples 
