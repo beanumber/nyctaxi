@@ -5,6 +5,7 @@
 #' @param url   base url to desired file
 #' @param n number of observations
 #' @param names names of the destination files
+#' @importFrom downloader download
 #' @export
 #' @examples 
 #' \dontrun{
