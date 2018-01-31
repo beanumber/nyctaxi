@@ -22,7 +22,11 @@ CREATE TABLE `yellow_old` (
  `total_amount` decimal(5,3) DEFAULT NULL,
  KEY `VendorID` (`VendorID`),
  KEY `pickup_datetime` (`tpep_pickup_datetime`),
- KEY `dropoff_datetime` (`tpep_dropoff_datetime`)
+ KEY `dropoff_datetime` (`tpep_dropoff_datetime`),
+ KEY `pickup_longitude` (`pickup_longitude`),
+ KEY `pickup_latitude` (`pickup_latitude`),
+ KEY `dropoff_longitude` (`dropoff_longitude`),
+ KEY `dropoff_latitude` (`dropoff_latitude`)
 )
 PARTITION BY RANGE( YEAR(tpep_pickup_datetime) ) (
   PARTITION p09 VALUES LESS THAN (2010),
@@ -57,7 +61,9 @@ CREATE TABLE `yellow` (
  `total_amount` decimal(5,3) DEFAULT NULL,
  KEY `VendorID` (`VendorID`),
  KEY `pickup_datetime` (`tpep_pickup_datetime`),
- KEY `dropoff_datetime` (`tpep_dropoff_datetime`)
+ KEY `dropoff_datetime` (`tpep_dropoff_datetime`),
+ KEY `PULocationID` (`PULocationID`),
+ KEY `DOLocationID` (`DOLocationID`)
 )
 PARTITION BY RANGE( YEAR(tpep_pickup_datetime) ) (
   PARTITION p16 VALUES LESS THAN (2017),

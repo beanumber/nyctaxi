@@ -30,4 +30,6 @@ Suggests:
     leaflet,
     rmarkdown,
     RSQLite
+URL: http://github.com/beanumber/nyctaxi
+BugReports: https://github.com/beanumber/nyctaxi/issues
 VignetteBuilder: knitr
