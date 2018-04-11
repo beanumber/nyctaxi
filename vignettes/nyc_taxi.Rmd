@@ -1,87 +1,166 @@
 ---
-title: "New York City's Taxi and Limousine Commission (TLC) Trip Data"
-author: "Wencong (Priscilla) Li & Trang Le"
+title: "Tools for Getting Access to Taxicab and E-Hail Service Data in New York City"
+author: "Wencong (Priscilla) Li"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{NYCTAXI DATA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: vignettes.bib
 ---
+# Data and nyctaxi Package
+## What data are included in this package?
+The `nyctaxi` R package allows users to download, clean, and load data into SQL databasses. There are four types of data that are available for users to get access to, and they are trip level yellow taxi data from 2009 to the most recent month, trip level green taxi data from August 2013 to the most recent month, uber pick-up data from April to September 2014 and from Janaury to June 2015, and weekly-aggregated lyft trip data from 2016 to the most recent week. 
 
-## NYC Taxi Trip Data
+### Yellow Taxi
+The total size of all yellow taxi trip data `csv` files (from Jan 2010 to Dec 2016) is 191.38 GB, and NYC yellow taxi trip data from Jan 2009 to the most recent month can be found on the NYC Taxi & Limousine Commission (TLC) website. [@datayellow] The data were collected and provided to the NYC TLC by technology providers authorized under the Taxicab & Livery Passenger Enhancement Programs (TPEP/LPEP).
 
-NYC's [Taxi and Limousine Commission Trip Data](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) is a collection of trip records including fields capturing pick-up and drop-off locations, times, trip distances, fares, rate types, and driver-reported passenger counts. The data was collected and provided to the NYC TLC by technology providers under the Taxicab & [Livery Passenger Enhancement Programs](http://www.nyc.gov/html/tlc/html/industry/shl.shtml). 
+The yellow taxi trip records include the following fields: pick-up and drop-off dates/times, pick-up and drop-off locations, trip distances, itemized fares, rate types, payment types, and driver-reported passenger counts. 
 
-## Getting started
-To start using the package, load the 'nyctaxi' package into your R session. Since the 'nyctaxi' package currently lives on CRAN now, you can install it from CRAN:
+### Green Taxi
+The total size of green taxi trip data `csv` files (from Aug 2013 to Dec 2016) is 7.8 GB, and green taxi trip data from Aug 2013 to the most recent month can be downloaded from NYC Taxi & Limousine Commission (TLC). [@datayellow] Green taxi trip records include the same variables as yellow taxi trip records do.
 
-```{r}
-#install.packages("nyctaxi")
+### TLC Summary Report
+The New York City TLC publishes summary reports that include aggregate statistics about taxi, Uber, and Lyft usage. These are in addition to the trip-level data; although the summary reports contain much less detail, they’re updated more frequently, which provides a more current glimpse into the state of the cutthroat NYC taxi market. [@datayellowmonth]
+
+In addition, the trip level NYC Uber data only covers two periods, from April to September 2014 and from January to June 2015. However, the summary reports cover weekly-aggreagated data from 2015 to the most recent week.
+
+The data can be accessed by using the following commands:
+* Yellow taxi data
+```{r, eval=FALSE}
+download.file("http://www.nyc.gov/html/tlc/downloads/csv/data_reports_monthly_indicators_yellow.csv", destfile = "~/Desktop/yellow_monthly_data.csv")
+```
+
+*Uber and Lyft data
+```{r, eval=FALSE}
+download.file("http://data.cityofnewyork.us/api/views/2v9c-2k7f/rows.csv?accessType=DOWNLOAD", destfile = "~/Desktop/fhv_weekly_data.csv")
+```
+
+### Uber
+The total size of Uber pick-up data (from Apr to Sep 2014 and from Jan to June 2015) is 900 MB, and thanks to FiveThirtyEight who obtained the data from NYC TLC by submitting a Freedom of Information Law request on July 20, 2015, these data are now open to public. [@datauber]
+
+The 2014 Uber data contains four variables: Date/Time (the date and time of the Uber pick-up), Lat (the latitude of the Uber pick-up), Lon (the longitude of the Uber pick-up), and Base (the TLC base company code affiliated with the Uber pickup).
+
+The 2015 Uber data contains four variables: Dispatching_base_num (the TLC base company code of the base that dispatched the Uber), Pickup_date (the date of the Uber pick-up), Affiliated_base_num (the TLC base company code affiliated with the Uber pickup), and locationID (the pick-up location ID affiliated with the Uber pickup).
+
+NYC Open Data also provides weekly-aggreagated Uber pick-up data from 2015 to the most recent month. [@datauberweek]
+
+### Lyft
+The total size of weekly-aggregated Lyft trip data (from Jan 2015 to Dec 2016) is 914.9 MB, and these data are open to public and weekly-aggregated Lyft data from 2015 to the most recent week can be found on NYC OpenData website. [@datalyft]
+
+### Taxi zone shapefile
+Two datasets are attached to `nyctaxi`. The first one is called `taxi_zone_lookup`, and this dataset contains information, such as taxi zone location IDs, location names, and corresponding boroughs for each ID. [@datayellow] A shapefile containing the boundaries for the taxi zones, `taxi_zones`, is also included in the package for users to do spatial analysis.
+```{r, message=FALSE}
+data("taxi_zones")
+```
+
+
+## ETL nyctaxi Package
+`etl` is the parent package of `nyctax`. `etl` provides a framework that allows R users to work with medium data without any knowledge in SQL database. Users can run SQL queries by using `dplyr` commands in R and choose to only return the final result, which could be a summary table, from SQL database into R Environment in order to aovid R from crashing. The user interaction takes place solely within R. 
+
+`etl` framework has three operations -Extract, Transfer, and Load- which bring real-time data into local or remote SQL databases. Users can  specify which type of SQL database they prefer to connect to. `etl`-dependent packages, such as `nyctaxi`, make medium data more accessible to a wider audience. [@baumer2014]
+
+`nyctaxi` was initially designed to work with New York City taxi data, but later on Uber and Lyft data were added and the ETL functions are modified to be specialized in working with these data. This package compiled three major sources of hail service in New York City so that it is convenient for users to compare and contrast the performance of these three services. [@pkgnyctaxi]
+
+This package inherits functions from many packages: `etl`, `dplyr`, `DBI`, `rlang`, and `stringr`. 
+
+Since SQL databases are good tools for medium data analysis, ETL functions build connection to a SQL database at the back end and convert R code automatically into SQL queries and send them to the SQL database to get data tables containing data of each hail service. Thus, users do not need to have any knowledge of SQL queries and they can draw in any subsets of the data from the SQL database in R.
+
+# Getting started
+To start using the package, load the 'nyctaxi' package into your R session. Since the 'nyctaxi' package currently lives on CRAN, you can install it by running the follwoing commands:
+
+```{r, eval=FALSE}
+install.packages("nyctaxi")
 library(nyctaxi)
 ```
 
-## Using the NYC Taxi Trip Data
-Some data are attached to this package: 'green_2016_01_sample' and 'yellow_2016_01_sample'are two of them. They are random samples of 100 observations generated by the 'sample' function in base R from the 2016 January green and yellow taxi trip data.
+## Extract-Transform-Load Operation
+Users need to create an `etl` object in order to apply the etl operations to it, and only the name of the SQL database, working directory, and type of SQL database need to be specified during initialization. If the type of SQL database is not specified, a local RSQLite database will be generated as default. 
 
-There are some data entry error. In order to eliminate the data entry error, let's limit the ranges of lngitude and latitude. 
-
-```{r, warning=FALSE, message=FALSE}
-data(green_2016_01_sample)
-head(green_2016_01_sample)
-green_2016_01_sample <- green_2016_01_sample %>%
-  filter(40.4 < pickup_latitude & pickup_latitude < 41) %>%
-  filter(-74.5 < pickup_longitude & pickup_longitude < -73.5) %>%
-  filter(40.4 < dropoff_latitude & dropoff_latitude < 41) %>%
-  filter(-74.5 < dropoff_longitude & dropoff_longitude < -73.5)
+```{r, eval = FALSE}
+# initializing an etl object
+db <- src_mysql("nyctaxi", user = "urname", host = "host", password = "pw")
+taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi", db)
 ```
 
-## Extracting, Transforming and Loading the data
-To access data during wider time spans, make use of the ['etl' package](https://github.com/beanumber/etl) to download the data and import it into a database. Please see the documentation for 'etl_extract' for further details and examples.
+### SQL Database Initialization
+`init.mysql()` is written under `nyctaxi` to help users to set up five basic table structures for MySQL database. `yellow_old` is created for Yellow Taxi data that are prior to August 2016, and `yellow` is created for data later than July 2016. `green`, `uber`, and `lyft` are also initiated for the three transportations. 
 
-```{r, warning=FALSE, message=FALSE}
-help("etl_extract.etl_nyctaxi")
-```
+`etl_init()` can be run after a database connection is built to process to process `init.mysql()` to initialize a MySQL database, and default columns with the correct variable names and typed defined will be automatically generated.
 
-The code below creates a directory on your local desktop and downloads NYC taxicab trip data from Janaury, 2016 to your local directory. It also transforms/cleans the data and loads it to a sqlite database.  
-```{r, eval=FALSE, warning=FALSE, message=FALSE}
-taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
-
+```{r, eval=FALSE}
 taxi %>%
-  etl_extract(years = 2016, months = 1, types = c("green")) %>% 
-  etl_transform(years = 2016, months = 1, types = c("green")) %>% 
-  etl_load(years = 2016, months = 1, types = "green")}
+  etl_init()
 ```
 
-## Using the NYC Green Taxi Trip Data
-You willl need the following R packages:
-```{r, warning=FALSE, message=FALSE}
+### Extract
+`etl_extract.etl_nyctaxi()` allows users to download New York City yellow taxi, green taxi, Uber, and Lyft data from the corresponding data sources. It takes the `years`, `months`, and `type` parameters and download the New York City taxi data specified by users. New York City Yellow and Green Taxi data are updated on NYC Taxi & Limousine Commission (TLC) website on a monthly basis. 
+
+```{r, eval=FALSE}
+taxi %>% 
+   etl_extract(years = 2014:2016, months = 1:12, type = c("yellow", "green"))
+```
+
+### Transform
+`etl_transform.etl_nyctaxi()` allows users to transform New York City yellow taxi, green taxi, Uber, and Lyft data into cleaned formats, and it utlizes different data cleaning techniques when it transforms data for each transportation type. In general, it cleans the data and creates a new `csv` file in the `load` directory to store the cleaned data. It helps us to retain and protect raw data from being modified or destroyed. Users are allowed to specify the month of interest in order to only transform the data that they are interested in. This functionality helps people to be more efficient with their use of time.
+
+By default, it takes the current year Yellow taxi trip records data files, and save copies of them in the `load` diectory. It skips the cleaning step, because the raw Yellow Taxi data downloaded from TLC is already in a desired format with all variables correctly labelled. 
+
+```{r, eval=FALSE}
+taxi %>% 
+   etl_transform(years = 2014:2016, months = 1:12, type = c("yellow", "green", "uber", "lyft"))
+```
+
+### Load
+`etl_load.etl_nyctaxi()` allows users to load New York City yellow taxi, green taxi, Uber, and Lyft data into different data tables in a SQL database. It populates a SQL database with data cleaned by `etl_transform`. 
+
+```{r, eval=FALSE}
+taxi %>% 
+   etl_load(years = 2014:2016, months = 1:12, type = c("yellow", "green", "uber", "lyft"))
+```
+
+# Case Study
+```{r, echo=FALSE}
+library(nyctaxi)
 library(dplyr)
 library(leaflet)
 library(lubridate)
 ```
 
+## Using NYC Taxi Trip Data
+4 datasets are attached to this package: `green_2016_01_sample` and `yellow_2016_01_sample` are two of them. They are random samples of 100 observations generated by the `sample()` function in base R from the January 2016 `green` and `yellow` taxi trip data.
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
+load("~/Desktop/SMITH/nyctaxi/data/green_2016_01_sample.rda")
+head(green_2016_01_sample)
+green_2016_01_sample <- green_2016_01_sample %>%
+  filter(is.na(green_2016_01_sample$pickup_longitude) == FALSE) %>%
+  filter(is.na(green_2016_01_sample$pickup_latitude) == FALSE) %>%
+  filter(is.na(green_2016_01_sample$pickup_longitude) == FALSE) %>%
+  filter(is.na(green_2016_01_sample$pickup_longitude) == FALSE)
+```
+
 ### Visualization
 We can use `leaflet` to visualize the pickup and dropoff locations of the 100 trips in the green taxi trip dataset. There are also shapefiles of NYC Taxi zones attached to `nyctaxi` R package. Let's plot them:
 
-```{r, warning=FALSE, message=FALSE}
-my_trips <- green_2016_01_sample
+```{r}
+m = leaflet(green_2016_01_sample) %>% addTiles()
+m %>% addCircleMarkers(~green_2016_01_sample$pickup_longitude, ~green_2016_01_sample$pickup_latitude, radius = 2)
 
-#clean_up data according to date and time of pickup
-map <- leaflet(data = green_2016_01_sample) %>% 
-  addTiles() %>% 
-  addCircles(lng = ~pickup_longitude, lat = ~pickup_latitude, color = "red") %>% 
-  addCircles(lng = ~dropoff_longitude, lat = ~dropoff_latitude, color = "green") %>%
-  addPolygons(data = taxi_zones, weight = 1)
-setView(map, lat = 40.730610, lng = -73.935242, zoom = 10);
+# map <- leaflet(data = green_2016_01_sample) %>% 
+#   addTiles() %>%
+#   addCircles(lng = ~green_2016_01_sample$pickup_longitude, lat = ~green_2016_01_sample$pickup_latitude, color = "red") %>% 
+#   addCircles(lng = ~green_2016_01_sample$dropoff_longitude, lat = ~green_2016_01_sample$dropoff_latitude, color = "green") %>%
+#   addPolygons(data = taxi_zones, weight = 1) %>%
+#   setView(map, lat = 40.730610, lng = -73.935242, zoom = 10)
+# map
 ```
-
 
 ### Play with Datetime Variable
 We can use `lubridate` to clean datetime variable:
 ```{r, warning=FALSE, message=FALSE}
-
-clean_datetime <- my_trips %>% 
+clean_datetime <- green_2016_01_sample %>% 
   mutate(lpep_pickup_datetime = ymd_hms(lpep_pickup_datetime)) %>%
   mutate(lpep_dropoff_datetime = ymd_hms(lpep_dropoff_datetime)) %>% 
   mutate(weekday_pickup = weekdays(lpep_pickup_datetime)) %>%
@@ -98,3 +177,20 @@ clean_datetime %>%
 ```
 It looks like on Friday and Saturday had the most trips.
 
+### Using Extract-Transform-Load Operations to Get Access Green Taxi data
+To access data during wider time spans, make use of the ['etl' package](https://github.com/beanumber/etl) to download the data and import it into a database. Please see the documentation for `etl_extract` for further details and examples.
+
+```{r, warning=FALSE, message=FALSE}
+help("etl_extract.etl_nyctaxi")
+```
+
+The code below creates a directory on your local desktop and downloads NYC taxicab trip data from Janaury, 2016 to your local directory. It also transforms/cleans the data and loads it to a sqlite database.  
+```{r, eval=FALSE, warning=FALSE, message=FALSE}
+taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
+taxi %>%
+  etl_extract(years = 2016, months = 1, types = c("green")) %>% 
+  etl_transform(years = 2016, months = 1, types = c("green")) %>% 
+  etl_load(years = 2016, months = 1, types = "green")}
+```
+
+# Reference
