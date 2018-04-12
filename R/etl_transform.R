@@ -70,7 +70,7 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
       names(src_small_green_2_df) <- "src"
       src_small_green_2_df <- inner_join(src_small_green_2_df, remote_green_2, by = "src")
       src_small_green_2_df <- src_small_green_2_df %>%
-        mutate(cmds_2 = paste("cut -d, -f1-", keep," ",src, " > ",attr(obj, "raw_dir"),"/green_tripdata_", 
+        mutate_(cmds_2 = ~paste("cut -d, -f1-", keep," ",src, " > ",attr(obj, "raw_dir"),"/green_tripdata_", 
                               year, "_", stringr::str_pad(month, 2, "left", "0"),".csv", sep = ""))
       #remove the extra column
       if(length(src_small_green_2) != 0) {
@@ -109,12 +109,13 @@ etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),
     }
     substrRight <- function(x, n){substr(x, nchar(x)-n+1, nchar(x))}
     uber14_datetime <- uber14 %>%
-      mutate(date = gsub( " .*$", "", `Date/Time`), len_date = nchar(date), 
-             time = sub('.*\\ ', '', `Date/Time`))
+      mutate_(date = ~gsub( " .*$", "", `Date/Time`), 
+              len_date = ~nchar(date), 
+              time = ~sub('.*\\ ', '', `Date/Time`))
     uber14_datetime <- uber14_datetime %>%
-      mutate(month = substr(`Date/Time`, 1, 1),
-             day = ifelse(len_date == 8, substr(`Date/Time`, 3,3),substr(`Date/Time`, 3,4)),
-             pickup_date = lubridate::ymd_hms(paste0("2014-", month, "-", day, " ", time)))
+      mutate_(month = ~substr(`Date/Time`, 1, 1),
+             day = ~ifelse(len_date == 8, substr(`Date/Time`, 3,3),substr(`Date/Time`, 3,4)),
+             pickup_date = ~lubridate::ymd_hms(paste0("2014-", month, "-", day, " ", time)))
     uber14_df <- uber14_datetime[-c(1,5:9)]
     
     #2015
