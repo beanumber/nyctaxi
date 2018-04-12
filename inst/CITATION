@@ -1,0 +1,17 @@
+citHeader("To cite nyctaxi in publications use:")
+
+citEntry(entry = "mastersthesis",
+  title        = "Tools for Understanding Taxicab and E-Hail Service Use in New York City",
+  author       = personList(as.person("Wencong Li")),
+  school      = "Smith College",
+  year         = "2018",
+  month       = "5",
+  pages        = "1--95",
+  url          = "http://scholarworks.smith.edu/theses/",
+
+  textVersion  =
+  paste("Wencong Li (2018).",
+        "Tools for Understanding Taxicab and E-Hail Service Use in New York City.",
+        "Honor's Thesis, Smith College, May, 1-95.",
+        "URL http://scholarworks.smith.edu/theses/.")
+)

@@ -1,6 +1,6 @@
 Package: nyctaxi
 Title: Accessing New York City Taxi Data
-Version: 0.0.2
+Version: 0.0.2.9000
 Date: 2017-10-24
 Authors@R: c(person("Ben", "Baumer", email = "ben.baumer@gmail.com", role = c("aut")),
     person("Wencong Priscilla", "Li", email = "liwencong1995@gmail.com", role = c("aut","cre")),
