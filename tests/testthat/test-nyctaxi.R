@@ -21,16 +21,14 @@ test_that("mysql works", {
   }
 })
 
-#test_that("get_file_path works", {
-#  expect_equal(nrow(get_file_path(2017, 1:6, "yellow", "~/")), 6)
-#})
+test_that("get_file_path works", {
+  expect_equal(nrow(get_file_path(2017, 1:6, "yellow", "~/")), 6)
+})
 
 test_that("download_nyc_data works", {
   taxi <- etl("nyctaxi")
   num_rows <- sample.int(100, size = 1)
-  base_url = "https://data.cityofnewyork.us/resource/edp9-qgv4.csv"
-  lyft <- download_nyc_data(taxi, base_url, 2016, n = num_rows,
-                            names = "lyft.csv")
+  lyft <- download_nyc_data(taxi, n = num_rows)
   expect_equal(nrow(readr::read_csv(lyft)), num_rows)
 })
 

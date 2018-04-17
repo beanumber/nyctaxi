@@ -10,8 +10,8 @@
 #' from the 2016 January green and yellow taxi trip data.
 #' 
 #' @docType data
-#' @format \code{yellow_2016_01_sample} datatable (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 19 variables.
-#' \code{green_2016_01_sample} datatable (\code{\link[dplyr]{tbl_df}}) has 1,000 rows and 21 variables. 
+#' @format \code{yellow_2016_01_sample} datatable (\code{\link[dplyr]{tbl_df}}) has 50,000 rows and 19 variables.
+#' \code{green_2016_01_sample} datatable (\code{\link[dplyr]{tbl_df}}) has 50,000 rows and 21 variables. 
 #' The following variables are in \code{yellow_2016_01_sample} or \code{green_2016_01_sample}.
 #' \describe{
 #'   \item{vendorid}{A code indicating the LPEP provider that provided the record.1= Creative Mobile Technologies, LLC; 2= VeriFone Inc.}
