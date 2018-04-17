@@ -15,7 +15,6 @@
 #' green (meaning green taxi data), uber, and lyft. Users can only choose one transportation at a time.
 #' The default is \code{yellow}.
 #' @param ... arguments passed to \code{\link[etl]{smart_download}}
-#' @inheritParams get_file_path
 #' @seealso \code{\link[etl]{etl_extract}}
 #' @examples 
 #' 

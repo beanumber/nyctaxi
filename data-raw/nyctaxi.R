@@ -16,7 +16,7 @@ set.seed(5)
 # take a random sample of size 1000 from a dataset  
 # sample without replacement
 
-n <- 50000
+n <- 10000
 
 yellow_2016_01_sample <- yellow_tripdata_2016_01 %>%
   sample_n(n)

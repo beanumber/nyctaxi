@@ -27,12 +27,13 @@ The New York City TLC publishes summary reports that include aggregate statistic
 In addition, the trip level NYC Uber data only covers two periods, from April to September 2014 and from January to June 2015. However, the summary reports cover weekly-aggreagated data from 2015 to the most recent week.
 
 The data can be accessed by using the following commands:
+
 * Yellow taxi data
 ```{r, eval=FALSE}
 download.file("http://www.nyc.gov/html/tlc/downloads/csv/data_reports_monthly_indicators_yellow.csv", destfile = "~/Desktop/yellow_monthly_data.csv")
 ```
 
-*Uber and Lyft data
+* Uber and Lyft data
 ```{r, eval=FALSE}
 download.file("http://data.cityofnewyork.us/api/views/2v9c-2k7f/rows.csv?accessType=DOWNLOAD", destfile = "~/Desktop/fhv_weekly_data.csv")
 ```
@@ -121,7 +122,7 @@ taxi %>%
 ```
 
 # Case Study
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 library(nyctaxi)
 library(dplyr)
 library(leaflet)
@@ -134,17 +135,19 @@ library(lubridate)
 ```{r, warning=FALSE, message=FALSE, echo=FALSE}
 head(green_2016_01_sample)
 green_2016_01_sample <- green_2016_01_sample %>%
-  filter(is.na(green_2016_01_sample$pickup_longitude) == FALSE) %>%
-  filter(is.na(green_2016_01_sample$pickup_latitude) == FALSE) %>%
-  filter(is.na(green_2016_01_sample$pickup_longitude) == FALSE) %>%
-  filter(is.na(green_2016_01_sample$pickup_longitude) == FALSE)
+  filter(is.na(pickup_longitude) == FALSE) %>%
+  filter(is.na(pickup_latitude) == FALSE) %>%
+  filter(is.na(pickup_longitude) == FALSE) %>%
+  filter(is.na(pickup_longitude) == FALSE)
 ```
 
 ### Visualization
-We can use `leaflet` to visualize the pickup and dropoff locations of the 100 trips in the green taxi trip dataset. There are also shapefiles of NYC Taxi zones attached to `nyctaxi` R package. Let's plot them:
+We can use `leaflet` to visualize the pickup and dropoff locations of the first 100 trips in the green taxi trip dataset. There are also shapefiles of NYC Taxi zones attached to `nyctaxi` R package. Let's plot them:
 
 ```{r, fig.width=6, fig.height=6}
-leaflet(green_2016_01_sample) %>% 
+green_2016_01_sample %>%
+  head(100) %>%
+  leaflet() %>% 
   addTiles() %>% 
   addCircleMarkers(~pickup_longitude, ~pickup_latitude, radius = 2)
 
@@ -188,9 +191,9 @@ The code below creates a directory on your local desktop and downloads NYC taxic
 ```{r, eval=FALSE, warning=FALSE, message=FALSE}
 taxi <- etl("nyctaxi", dir = "~/Desktop/nyctaxi/")
 taxi %>%
-  etl_extract(years = 2016, months = 1, types = c("green")) %>% 
-  etl_transform(years = 2016, months = 1, types = c("green")) %>% 
-  etl_load(years = 2016, months = 1, types = "green")}
+  etl_extract(years = 2016, months = 1, types = "green") %>% 
+  etl_transform(years = 2016, months = 1, types = "green") %>% 
+  etl_load(years = 2016, months = 1, types = "green")
 ```
 
 # Reference

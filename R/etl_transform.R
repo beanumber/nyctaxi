@@ -7,7 +7,6 @@
 #' @rdname etl_extract.etl_nyctaxi
 #' @details transform NYC Yellow taxi trip data from raw directory to load directory
 #' and/or \code{green}. The default is \code{yellow}.
-#' @inheritParams get_file_path
 #' @seealso \code{\link[etl]{etl_transform}}
 
 etl_transform.etl_nyctaxi <- function(obj, years = as.numeric(format(Sys.Date(),'%Y')), 

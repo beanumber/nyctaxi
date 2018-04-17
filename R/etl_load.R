@@ -5,7 +5,6 @@
 #' @details load NYC Yellow taxi trip data from load directory into a sql database, 
 #' the default is a sqlite database
 #' and/or \code{green}. The default is \code{yellow}.
-#' @inheritParams get_file_path
 #' @seealso \code{\link[etl]{etl_load}}
 
  
